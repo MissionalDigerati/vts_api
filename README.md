@@ -9,6 +9,13 @@ Requirements
 * PHP 5.28 >
 * [CakePHP Framework](http://cakephp.org)
 
+Installation
+------------
+
+* Download the latest version
+* Download [CakePHP Framework](http://cakephp.org)
+* Replace the app directory with this code, and rename it app
+* Download the [CakePHP DebugKit](https://github.com/cakephp/debug_kit), and place it in your app/Plugin directory
 
 Development
 -----------
