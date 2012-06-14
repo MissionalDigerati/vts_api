@@ -2,6 +2,7 @@
 .rvmrc
 .autotest
 .rspec
+spec/config/database.yml
 tmp/*
 Config/database.php
 Config/core.php

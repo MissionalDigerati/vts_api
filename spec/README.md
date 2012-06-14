@@ -11,8 +11,11 @@ Make sure to gem install each gem before testing.
 
 `gem install rest-client`
 `gem install nokogiri`
+`gem install activerecord`
+`gem install mysql`
 
 Set your vhost url in the spec_helper.rb file.
+Setup your database settings in spec/config/database.yml
 
 Usage
 -----

@@ -21,7 +21,7 @@ require 'spec_helper'
 
 describe "API::TranslationRequests" do
 	
-	describe "GET /translation_request/id" do
+	describe "GET /translation_requests/id" do
 		
 		before(:all) do
 			# create a translation request
@@ -87,7 +87,7 @@ describe "API::TranslationRequests" do
 		
 	end
 	
-	describe "POST /translation_request" do
+	describe "POST /translation_requests" do
 		it "Create via JSON" do
 			url = "#{ROOT_URL}translation_requests.json"
 			request = RestClient.post url, {}.to_json, :content_type => :json, :accept => :json

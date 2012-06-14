@@ -22,6 +22,14 @@ require 'json'
 require 'rspec'
 require 'rest_client'
 require 'nokogiri'
+require "active_record"
+require "yaml"
+
+# Setup Active Record
+#
+db_config = YAML::load(File.open(File.join(File.dirname(__FILE__),'config','database.yml')))['development']
+ActiveRecord::Base.establish_connection(db_config)
+
 # Require the support directory
 #
 support_dir = File.expand_path("../support", __FILE__)
@@ -30,7 +38,24 @@ Dir["#{support_dir}/**/*.rb"].each {|f| require f}
 # Set the local vhost
 #
 ROOT_URL = 'http://api.obs.local/'
+cleaner = DatabaseCleaner.new
+table_names = ['translation_requests']
 
 # RSpec configuration
 RSpec.configure do |config|
+	
+	config.before(:suite) do
+		cleaner.truncate_tables(table_names)
+  end
+
+  config.before(:each) do
+  end
+
+  config.after(:each) do
+  end
+
+	config.after(:suite) do
+		cleaner.truncate_tables(table_names)
+  end
+
 end
