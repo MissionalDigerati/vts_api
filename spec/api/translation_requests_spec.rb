@@ -21,32 +21,34 @@ require 'spec_helper'
 
 describe "API::TranslationRequests" do
 	
-	it "should create a new translation request with JSON request" do
-		url = "#{ROOT_URL}translation_requests.json"
-		request = RestClient.post url, {}.to_json, :content_type => :json, :accept => :json
-		request.code.should eq(200)
-		response = JSON.parse(request)
-		response['vts']['status'].should eq('success')
-		response['vts']['message'].should match('has been created')
-		response['vts']['translation_requests'][0]['token'].should_not be_nil
-		response['vts']['translation_requests'][0]['token'].should_not be_empty
-		response['vts']['translation_requests'][0]['expires_at'].should_not be_nil
-		response['vts']['translation_requests'][0]['expires_at'].should_not be_empty
-	end
+	describe "POST /translation_request" do
+		it "Create via JSON" do
+			url = "#{ROOT_URL}translation_requests.json"
+			request = RestClient.post url, {}.to_json, :content_type => :json, :accept => :json
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['status'].should eq('success')
+			response['vts']['message'].should match('has been created')
+			response['vts']['translation_requests'][0]['token'].should_not be_nil
+			response['vts']['translation_requests'][0]['token'].should_not be_empty
+			response['vts']['translation_requests'][0]['expires_at'].should_not be_nil
+			response['vts']['translation_requests'][0]['expires_at'].should_not be_empty
+		end
 	
-	it "should create a new translation request with XML request" do
-		url = "#{ROOT_URL}translation_requests.xml"
-		request = RestClient.post url, "", :content_type => :xml, :accept => :xml
-		request.code.should eq(200)
-		response = Nokogiri::XML(request)
-		response.css("vts status").text.should eq('success')
-		response.css("vts message").text.should match('has been created')
-		token = response.css("vts translation_requests token").first.text
-		token.should_not be_nil
-		token.should_not be_empty
-		expires = response.css("vts translation_requests expires_at").first.text
-		expires.should_not be_nil
-		expires.should_not be_empty
+		it "Create via XML" do
+			url = "#{ROOT_URL}translation_requests.xml"
+			request = RestClient.post url, "", :content_type => :xml, :accept => :xml
+			request.code.should eq(200)
+			response = Nokogiri::XML(request)
+			response.css("vts status").text.should eq('success')
+			response.css("vts message").text.should match('has been created')
+			token = response.css("vts translation_requests token").first.text
+			token.should_not be_nil
+			token.should_not be_empty
+			expires = response.css("vts translation_requests expires_at").first.text
+			expires.should_not be_nil
+			expires.should_not be_empty
+		end
 	end
 	
 end
