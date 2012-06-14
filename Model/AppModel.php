@@ -31,4 +31,28 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
+	
+	/**
+	* Create a random hash using md5 and the current time/date and shortens it to the length param
+	*
+	* @param integer $length length of the hash
+	* @param string $additional any addition content you want to include in the string
+	* @return string
+	* @author Johnathan Pulos
+	*/
+	function createToken($length, $additional = '') {
+		/**
+		 * get both seconds and microseconds parts of the time
+		 *
+		 * @author Johnathan Pulos
+		 */
+		list($usec, $sec) = explode(' ', microtime());
+		/**
+		 * remove the period in $usec
+		 *
+		 * @author Johnathan Pulos
+		 */
+		$usec = preg_replace('[\.]','', $usec);
+		return substr(md5(date('ymd') . $usec . $sec . $additional), 0, $length);
+	}
 }

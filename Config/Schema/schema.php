@@ -8,7 +8,7 @@ class ApiVideoTranslatorSchema extends CakeSchema {
 	public function after($event = array()) {
 	}
 
-	public $requests = array(
+	public $translation_requests = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'token' => array('type' => 'string', 'null' => false, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),

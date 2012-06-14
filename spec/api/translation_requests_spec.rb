@@ -17,12 +17,21 @@
  # @author Johnathan Pulos <johnathan@missionaldigerati.org>
  # @copyright Copyright 2012 Missional Digerati
 #
-require 'rubygems'
-require 'json'
-require 'rspec'
-require 'rest_client'
-ROOT_URL = 'http://api.obs.local/'
+require 'spec_helper'
 
-# RSpec configuration
-RSpec.configure do |config|
+describe "API::TranslationRequests" do
+	
+	it "should create a new translation request with JSON request" do
+		url = "#{ROOT_URL}translation_requests.json"
+		request = RestClient.post url, {}.to_json, :content_type => :json, :accept => :json
+		request.code.should eq(200)
+		response = JSON.parse(request)
+		response['status'].should eq('success')
+		response['message'].should match('has been created')
+		response['translation_request']['token'].should_not be_nil
+		response['translation_request']['token'].should_not be_empty
+		response['translation_request']['expires_at'].should_not be_nil
+		response['translation_request']['expires_at'].should_not be_empty
+	end
+	
 end
