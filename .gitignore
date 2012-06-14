@@ -1,5 +1,7 @@
 .DS_Store
 .rvmrc
+.autotest
+.rspec
 tmp/*
 Config/database.php
 Config/core.php
