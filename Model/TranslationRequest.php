@@ -38,7 +38,7 @@ class TranslationRequest extends AppModel {
 	public function beforeSave() {
 		if (!$this->id && !isset($this->data[$this->alias][$this->primaryKey])) {
 			$this->data['TranslationRequest']['token'] = "tr" . $this->createToken(25);
-			$tomorrow = mktime(0,0,0,date("m"),date("d")+1,date("Y"));
+			$tomorrow = mktime(date("G"),date("i"),date("s"),date("m"),date("d")+1,date("Y"));
 			$this->data['TranslationRequest']['expires_at'] = date('Y-m-d G:i:s', $tomorrow);
 		}
 		return true;
