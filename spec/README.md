@@ -10,6 +10,7 @@ Make sure to gem install each gem before testing.
 `gem install rspec`
 
 `gem install rest-client`
+`gem install nokogiri`
 
 Set your vhost url in the spec_helper.rb file.
 

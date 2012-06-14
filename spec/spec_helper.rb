@@ -21,6 +21,7 @@ require 'rubygems'
 require 'json'
 require 'rspec'
 require 'rest_client'
+require 'nokogiri'
 ROOT_URL = 'http://api.obs.local/'
 
 # RSpec configuration
