@@ -22,6 +22,13 @@ require 'json'
 require 'rspec'
 require 'rest_client'
 require 'nokogiri'
+# Require the support directory
+#
+support_dir = File.expand_path("../support", __FILE__)
+Dir["#{support_dir}/**/*.rb"].each {|f| require f}
+
+# Set the local vhost
+#
 ROOT_URL = 'http://api.obs.local/'
 
 # RSpec configuration

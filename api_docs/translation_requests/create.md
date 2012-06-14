@@ -14,13 +14,36 @@ Creates a new translation request that expires in 1 day.  Once you create a tran
 
 **Example Request**
 
-POST /translation_requests.json
+_JSON_
 
-`{"vts":
+	POST /translation_requests.json
+
+	`{"vts":
 		{	"status":"success",
 			"message":"Your translation request has been created.",
 			"translation_requests":[
-			{"modified":"2012-06-14 08:18:30","created":"2012-06-14 08:18:30","token":"tra38508e1872a9a0f8d8ce7fbf","expires_at":"2012-06-15 8:18:30","id":"39"}
+				{	"id":"50",
+					"token":"tr0e64e2cf095a611e8ba33b417",
+					"created":"2012-06-14 13:35:40",
+					"modified":"2012-06-14 13:35:40",
+					"expires_at":"2012-06-15 13:35:40"
+				}
 			]
 		}
-}`
+	}`
+
+_XML_
+
+	POST /translation_requests.xml
+
+	`<vts>
+		<status>success</status>
+		<message>Your translation request has been created.</message>
+		<translation_requests>
+			<id>51</id>
+			<token>tr8b4e8415d80de2286ec934d57</token>
+			<created>2012-06-14 13:37:01</created>
+			<modified>2012-06-14 13:37:01</modified>
+			<expires_at>2012-06-15 13:37:01</expires_at>
+		</translation_requests>
+	</vts>`

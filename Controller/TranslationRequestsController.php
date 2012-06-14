@@ -57,7 +57,7 @@ class TranslationRequestsController extends AppController {
 		if (!$this->TranslationRequest->exists()) {
 			throw new NotFoundException(__('Invalid translation request'));
 		}
-		$this->set('translationRequest', $this->TranslationRequest->read(null, $id));
+		$this->set('translation_request', $this->TranslationRequest->read(null, $id));
 	}
 
 /**
@@ -68,14 +68,16 @@ class TranslationRequestsController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->TranslationRequest->create();
-			if ($translation_request = $this->TranslationRequest->save($this->request->data)) {
+			if ($this->TranslationRequest->save($this->request->data)) {
+				$id = $this->TranslationRequest->getLastInsertID();
 				$this->set('message', __('Your translation request has been created.'));
 				$this->set('status', __('success'));
+				$this->set('translation_request', $this->TranslationRequest->read(null, $id));
 			} else {
 				$this->set('message', __('Your translation request has been denied.'));
 				$this->set('status', __('error'));
+				$this->set('translation_request', array());
 			}
-			$this->set('translation_request', $translation_request);
 		}
 	}
 
