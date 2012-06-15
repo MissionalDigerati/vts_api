@@ -20,7 +20,7 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-$data = array('vts' => array('status' => 'error', 'message' => 'Invalid resource id provided.'));
+$data = array('vts' => array('status' => 'error', 'message' => 'Sorry,  we have experienced a internal server error.'));
 $xml = Xml::build($data);
 ?>
 <?php echo $xml->saveXML();?>

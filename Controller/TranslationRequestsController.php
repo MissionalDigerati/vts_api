@@ -42,6 +42,9 @@ class TranslationRequestsController extends AppController {
  * @return void
  */
 	public function index() {
+		if (!$this->request->is('get')) {
+			throw new MethodNotAllowedException();
+		}
 		$this->TranslationRequest->recursive = 0;
 		$this->set('translationRequests', $this->paginate());
 	}
@@ -49,13 +52,16 @@ class TranslationRequestsController extends AppController {
 /**
  * view method
  *
- * @param string $id
+ * @param string $id the id for the resource
  * @return void
  */
 	public function view($id = null) {
+		if (!$this->request->is('get')) {
+			throw new MethodNotAllowedException();
+		}
 		$this->TranslationRequest->id = $id;
 		if (!$this->TranslationRequest->exists()) {
-			throw new NotFoundException(__('Invalid translation request'));
+			throw new NotFoundException(__('Invalid translation request.'));
 		}
 		$this->set('translation_request', $this->TranslationRequest->read(null, $id));
 	}
@@ -66,25 +72,26 @@ class TranslationRequestsController extends AppController {
  * @return void
  */
 	public function add() {
-		if ($this->request->is('post')) {
-			$this->TranslationRequest->create();
-			if ($this->TranslationRequest->save($this->request->data)) {
-				$id = $this->TranslationRequest->getLastInsertID();
-				$this->set('message', __('Your translation request has been created.'));
-				$this->set('status', __('success'));
-				$this->set('translation_request', $this->TranslationRequest->read(null, $id));
-			} else {
-				$this->set('message', __('Your translation request has been denied.'));
-				$this->set('status', __('error'));
-				$this->set('translation_request', array());
-			}
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		$this->TranslationRequest->create();
+		if ($this->TranslationRequest->save($this->request->data)) {
+			$id = $this->TranslationRequest->getLastInsertID();
+			$this->set('message', __('Your translation request has been created.'));
+			$this->set('status', __('success'));
+			$this->set('translation_request', $this->TranslationRequest->read(null, $id));
+		} else {
+			$this->set('message', __('Your translation request has been denied.'));
+			$this->set('status', __('error'));
+			$this->set('translation_request', array());
 		}
 	}
 
 /**
  * edit method
  *
- * @param string $id
+ * @param string $id the id for the resource
  * @return void
  */
 	public function edit($id = null) {
@@ -105,21 +112,22 @@ class TranslationRequestsController extends AppController {
 /**
  * delete method
  *
- * @param string $id
+ * @param string $id the id for the resource
  * @return void
  */
 	public function delete($id = null) {
-		if (!$this->request->is('post')) {
+		if (!$this->request->is('delete')) {
 			throw new MethodNotAllowedException();
 		}
 		$this->TranslationRequest->id = $id;
 		if (!$this->TranslationRequest->exists()) {
-			throw new NotFoundException(__('Invalid translation request'));
+			throw new NotFoundException(__('Invalid translation request.'));
 		}
 		if ($this->TranslationRequest->delete()) {
-			$this->flash(__('Translation request deleted'), array('action' => 'index'));
+			$this->set('message', __('Your translation request has been deleted.'));
+			$this->set('status', __('success'));
+		}else {
+			throw new InternalErrorException();
 		}
-		$this->flash(__('Translation request was not deleted'), array('action' => 'index'));
-		$this->redirect(array('action' => 'index'));
 	}
 }

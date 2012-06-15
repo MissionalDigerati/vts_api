@@ -20,7 +20,5 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-$data = array('vts' => array('status' => 'error', 'message' => 'Invalid resource id provided.'));
-$xml = Xml::build($data);
+echo json_encode(array('vts' => array('status' => 'error', 'message' => 'Invalid http method provided.')));
 ?>
-<?php echo $xml->saveXML();?>

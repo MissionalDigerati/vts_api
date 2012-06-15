@@ -43,6 +43,23 @@ class AppExceptionRenderer extends ExceptionRenderer {
 		$this->controller->render('/Errors/'.$ext.'/error'.$statusCode);
 		$this->controller->response->send();
 	}
+	
+	/**
+   * Internal Server Error
+   *
+   * @param Exception $error 
+   * @return void
+   * @access public
+   * @author Johnathan Pulos
+   */  
+	public function error500($error) {
+		$ext = $this->controller->params['ext'];
+		$statusCode = $error->getCode();
+		$this->controller->response->statusCode($statusCode);
+		$this->controller->render('/Errors/'.$ext.'/error'.$statusCode);
+		$this->controller->response->send();
+	}
+  
 
 }
 ?>

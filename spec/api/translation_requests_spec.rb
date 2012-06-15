@@ -117,4 +117,31 @@ describe "API::TranslationRequests" do
 		end
 	end
 	
+	describe "DELETE /translation_requests/id" do
+		
+		before(:all) do
+			# create a translation request
+			#
+			translation_fixture = TranslationRequestsFixture.new
+			@translation_request = translation_fixture.create
+		end
+		
+		it "Delete via JSON" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
+			request = RestClient.delete url, :content_type => :json, :accept => :json
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['status'].should eq('success')
+			response['vts']['message'].should match('has been deleted')
+			response['vts']['translation_requests'].should be_empty
+		end
+	
+		# it "Delete via XML" do
+		# 	url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
+		# 	request = RestClient.delete url, :content_type => :xml, :accept => :xml
+		# 	request.code.should eq(200)
+		# 	response = Nokogiri::XML(request)
+		# end
+	end
+	
 end
