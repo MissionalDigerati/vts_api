@@ -28,6 +28,21 @@ App::uses('AppModel', 'Model');
  */
 class TranslationRequest extends AppModel {
 	
+/**
+ * Check if the translation request token has expired
+ *
+ * @return boolean
+ * @access public
+ * @author Johnathan Pulos
+ */
+	public function isExpired() {
+		if(time() > strtotime($this->field('expires_at'))) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+		
 	/**
 	 * Call the CakePHP beforeSave callback
 	 *

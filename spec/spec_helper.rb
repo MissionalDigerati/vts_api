@@ -46,7 +46,7 @@ OBSFactory = OBSFactories.new
 RSpec.configure do |config|
 	
 	config.before(:suite) do
-		cleaner.truncate_tables(table_names)
+		# cleaner.truncate_tables(table_names)
   end
 
   config.before(:each) do
@@ -56,7 +56,7 @@ RSpec.configure do |config|
   end
 
 	config.after(:suite) do
-		cleaner.truncate_tables(table_names)
+		# cleaner.truncate_tables(table_names)
   end
 
 end

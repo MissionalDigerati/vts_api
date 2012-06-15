@@ -18,6 +18,7 @@
  # @copyright Copyright 2012 Missional Digerati
 #
 require 'spec_helper'
+require'date'
 
 describe "API::TranslationRequests" do
 	
@@ -140,6 +141,74 @@ describe "API::TranslationRequests" do
 			translation_requests = response.css("vts translation_requests")
 			translation_requests.should_not be_empty
 		end
+	end
+	
+	describe "Expired Translation Requests" do
+		
+		before(:each) do
+			@translation_request = OBSFactory.translation_request({expires_at: (Date.today - 1)})
+		end
+		
+		it "401 Unauthorized on View action via JSON" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
+			begin
+			  request = RestClient.get url, :content_type => :json, :accept => :json
+			rescue => e
+			  e.response.code.should eq(401)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should_not be_empty
+				response['vts']['status'].should match('error')
+				response['vts']['message'].should_not be_empty
+				response['vts']['message'].downcase.should match('unauthorized')
+			end
+		end
+		
+		it "401 Unauthorized on View action via XML" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
+			begin
+			  request = RestClient.get url, :content_type => :xml, :accept => :xml
+			rescue => e
+			  e.response.code.should eq(401)
+				response = Nokogiri::XML(e.response)
+				status = response.css("vts status").text
+				status.should_not be_empty
+				status.should eq('error')
+				message = response.css("vts message").text
+				message.should_not be_empty
+				message.downcase.should match('unauthorized')
+			end
+		end
+		
+		it "401 Unauthorized on Delete action via JSON" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
+			begin
+			  request = RestClient.delete url, :content_type => :json, :accept => :json
+			rescue => e
+			  e.response.code.should eq(401)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should_not be_empty
+				response['vts']['status'].should match('error')
+				response['vts']['message'].should_not be_empty
+				response['vts']['message'].downcase.should match('unauthorized')
+			end
+		end
+		
+		it "401 Unauthorized on Delete action via XML" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
+			begin
+			  request = RestClient.delete url, :content_type => :xml, :accept => :xml
+			rescue => e
+			  e.response.code.should eq(401)
+				response = Nokogiri::XML(e.response)
+				status = response.css("vts status").text
+				status.should_not be_empty
+				status.should eq('error')
+				message = response.css("vts message").text
+				message.should_not be_empty
+				message.downcase.should match('unauthorized')
+			end
+		end
+		
 	end
 	
 end

@@ -35,17 +35,6 @@ class TranslationRequestsController extends AppController {
  * @var array
  */
 	public $components = array('RequestHandler');
-	
-/**
- * CakePHP beforeRender method
- *
- * @return void
- * @access public
- * @author Johnathan Pulos
- */
-	public function beforeRender() {
-		parent::beforeRender();
-	}
 
 /**
  * index method
@@ -67,6 +56,9 @@ class TranslationRequestsController extends AppController {
 		$this->TranslationRequest->id = $id;
 		if (!$this->TranslationRequest->exists()) {
 			throw new NotFoundException(__('Invalid translation request.'));
+		}
+		if ($this->TranslationRequest->isExpired()) {
+			throw new Exception(__('Your token has expired.'), 401);
 		}
 		$this->set('translation_request', $this->TranslationRequest->read(null, $id));
 	}
@@ -101,6 +93,9 @@ class TranslationRequestsController extends AppController {
 		if (!$this->TranslationRequest->exists()) {
 			throw new NotFoundException(__('Invalid translation request.'));
 		}
+		if ($this->TranslationRequest->isExpired()) {
+			throw new Exception(__('Your token has expired.'), 401);
+		}
 		if ($this->TranslationRequest->delete()) {
 			$this->set('message', __('Your translation request has been deleted.'));
 			$this->set('status', __('success'));
@@ -108,4 +103,5 @@ class TranslationRequestsController extends AppController {
 			throw new InternalErrorException();
 		}
 	}
+
 }
