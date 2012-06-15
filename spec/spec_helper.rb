@@ -40,6 +40,7 @@ Dir["#{support_dir}/**/*.rb"].each {|f| require f}
 ROOT_URL = 'http://api.obs.local/'
 cleaner = DatabaseCleaner.new
 table_names = ['translation_requests']
+OBSFactory = OBSFactories.new
 
 # RSpec configuration
 RSpec.configure do |config|

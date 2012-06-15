@@ -24,10 +24,7 @@ describe "API::TranslationRequests" do
 	describe "GET /translation_requests/id" do
 		
 		before(:all) do
-			# create a translation request
-			#
-			translation_fixture = TranslationRequestsFixture.new
-			@translation_request = translation_fixture.create
+			@translation_request = OBSFactory.translation_request
 		end
 		
 		it "Read via JSON" do
@@ -37,9 +34,9 @@ describe "API::TranslationRequests" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should be_empty
-			response['vts']['translation_requests'][0]['id'].should eq(@translation_request['id'])
+			response['vts']['translation_requests'][0]['id'].should eq("#{@translation_request['id']}")
 			response['vts']['translation_requests'][0]['token'].should eq(@translation_request['token'])
-			response['vts']['translation_requests'][0]['expires_at'].should eq(@translation_request['expires_at'])
+			response['vts']['translation_requests'][0]['expires_at'].should eq("#{@translation_request['expires_at'].strftime("%Y-%m-%d %H:%M:%S")}")
 		end
 	
 		it "Read via XML" do
@@ -50,11 +47,11 @@ describe "API::TranslationRequests" do
 			response.css("vts status").text.should eq('success')
 			response.css("vts message").text.should be_empty
 			id = response.css("vts translation_requests id").first.text
-			id.should eq(@translation_request['id'])
+			id.should eq("#{@translation_request['id']}")
 			token = response.css("vts translation_requests token").first.text
 			token.should eq(@translation_request['token'])
 			expires = response.css("vts translation_requests expires_at").first.text
-			expires.should eq(@translation_request['expires_at'])
+			expires.should eq("#{@translation_request['expires_at'].strftime("%Y-%m-%d %H:%M:%S")}")
 		end
 		
 		it "404 Error (resource missing) via JSON" do
@@ -120,10 +117,7 @@ describe "API::TranslationRequests" do
 	describe "DELETE /translation_requests/id" do
 		
 		before(:each) do
-			# create a translation request
-			#
-			translation_fixture = TranslationRequestsFixture.new
-			@translation_request = translation_fixture.create
+			@translation_request = OBSFactory.translation_request
 		end
 		
 		it "Delete via JSON" do

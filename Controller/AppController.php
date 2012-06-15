@@ -38,4 +38,47 @@ class AppController extends Controller {
 	 * @var array
 	 */
 	public $components = array('DebugKit.Toolbar');
+	
+	/**
+	 * CakePHP callback beforeRender
+	 *
+	 * @return void
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	public function beforeRender() {
+		/**
+		 * Make sure they are using the correct HTTP methods
+		 *
+		 * @author Johnathan Pulos
+		 */
+		switch ($this->request['action']) {
+			case 'index':
+			case 'view':
+				if (!$this->request->is('get')) {
+					throw new MethodNotAllowedException();
+					exit;
+				}
+			break;
+			case 'add':
+				if (!$this->request->is('post')) {
+					throw new MethodNotAllowedException();
+					exit;
+				}
+			break;
+			case 'edit':
+				if (!$this->request->is('put')) {
+					throw new MethodNotAllowedException();
+					exit;
+				}
+			break;
+			case 'delete':
+				if (!$this->request->is('delete')) {
+					throw new MethodNotAllowedException();
+					exit;
+				}
+			break;
+		}
+	}
+
 }

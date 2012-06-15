@@ -37,16 +37,24 @@ class TranslationRequestsController extends AppController {
 	public $components = array('RequestHandler');
 	
 /**
+ * CakePHP beforeRender method
+ *
+ * @return void
+ * @access public
+ * @author Johnathan Pulos
+ */
+	public function beforeRender() {
+		parent::beforeRender();
+	}
+
+/**
  * index method
  *
  * @return void
  */
 	public function index() {
-		if (!$this->request->is('get')) {
-			throw new MethodNotAllowedException();
-		}
-		$this->TranslationRequest->recursive = 0;
-		$this->set('translationRequests', $this->paginate());
+		// $this->TranslationRequest->recursive = 0;
+		// $this->set('translationRequests', $this->paginate());
 	}
 
 /**
@@ -56,9 +64,6 @@ class TranslationRequestsController extends AppController {
  * @return void
  */
 	public function view($id = null) {
-		if (!$this->request->is('get')) {
-			throw new MethodNotAllowedException();
-		}
 		$this->TranslationRequest->id = $id;
 		if (!$this->TranslationRequest->exists()) {
 			throw new NotFoundException(__('Invalid translation request.'));
@@ -72,9 +77,6 @@ class TranslationRequestsController extends AppController {
  * @return void
  */
 	public function add() {
-		if (!$this->request->is('post')) {
-			throw new MethodNotAllowedException();
-		}
 		$this->TranslationRequest->create();
 		if ($this->TranslationRequest->save($this->request->data)) {
 			$id = $this->TranslationRequest->getLastInsertID();
@@ -89,36 +91,12 @@ class TranslationRequestsController extends AppController {
 	}
 
 /**
- * edit method
- *
- * @param string $id the id for the resource
- * @return void
- */
-	public function edit($id = null) {
-		$this->TranslationRequest->id = $id;
-		if (!$this->TranslationRequest->exists()) {
-			throw new NotFoundException(__('Invalid translation request'));
-		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->TranslationRequest->save($this->request->data)) {
-				$this->flash(__('The translation request has been saved.'), array('action' => 'index'));
-			} else {
-			}
-		} else {
-			$this->request->data = $this->TranslationRequest->read(null, $id);
-		}
-	}
-
-/**
  * delete method
  *
  * @param string $id the id for the resource
  * @return void
  */
 	public function delete($id = null) {
-		if (!$this->request->is('delete')) {
-			throw new MethodNotAllowedException();
-		}
 		$this->TranslationRequest->id = $id;
 		if (!$this->TranslationRequest->exists()) {
 			throw new NotFoundException(__('Invalid translation request.'));
