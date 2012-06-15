@@ -119,7 +119,7 @@ describe "API::TranslationRequests" do
 	
 	describe "DELETE /translation_requests/id" do
 		
-		before(:all) do
+		before(:each) do
 			# create a translation request
 			#
 			translation_fixture = TranslationRequestsFixture.new
@@ -136,12 +136,16 @@ describe "API::TranslationRequests" do
 			response['vts']['translation_requests'].should be_empty
 		end
 	
-		# it "Delete via XML" do
-		# 	url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
-		# 	request = RestClient.delete url, :content_type => :xml, :accept => :xml
-		# 	request.code.should eq(200)
-		# 	response = Nokogiri::XML(request)
-		# end
+		it "Delete via XML" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
+			request = RestClient.delete url, :content_type => :xml, :accept => :xml
+			request.code.should eq(200)
+			response = Nokogiri::XML(request)
+			response.css("vts status").text.should eq('success')
+			response.css("vts message").text.should match('has been deleted')
+			translation_requests = response.css("vts translation_requests")
+			translation_requests.should_not be_empty
+		end
 	end
 	
 end
