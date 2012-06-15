@@ -17,6 +17,11 @@ Installation
 * Replace the app directory with this code, and rename it app
 * Download the [CakePHP DebugKit](https://github.com/cakephp/debug_kit), and place it in your app/Plugin directory
 
+API Documentation
+-----------------
+
+To view the API Documentation,  just visit the [Github Pages Branch](https://github.com/MissionalDigerati/video_translator_service/tree/gh-pages).
+
 Development
 -----------
 
