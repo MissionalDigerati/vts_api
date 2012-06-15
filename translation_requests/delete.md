@@ -20,20 +20,24 @@ _JSON_
 
 DELETE /translation_requests/1.json
 
-`{"vts":
+```json
+{"vts":
 	{	"status":"success",
 		"message":"Your translation request has been deleted.",
 		"translation_requests":[]
 	}
-}`
+}
+```
 
 _XML_
 
 DELETE /translation_requests/1.xml
 
-`<?xml version="1.0" encoding="UTF-8"?>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <vts>
 	<status>success</status>
 	<message>Your translation request has been deleted.</message>
 	<translation_requests/>
-</vts>`
+</vts>
+```

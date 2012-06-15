@@ -20,7 +20,8 @@ _JSON_
 
 GET /translation_requests/1.json
 
-`{"vts":
+```json
+{"vts":
 	{	"status":"success",
 		"message":"",
 		"translation_requests":[
@@ -32,13 +33,15 @@ GET /translation_requests/1.json
 			}
 		]
 	}
-}`
+}
+```
 
 _XML_
 
 GET /translation_requests/1.xml
 
-`<?xml version="1.0" encoding="UTF-8"?>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <vts>
 	<status>success</status>
 	<message/>
@@ -49,4 +52,5 @@ GET /translation_requests/1.xml
 		<modified>2012-06-14 08:52:07</modified>
 		<expires_at>2012-06-15 08:52:07</expires_at>
 	</translation_requests>
-</vts>`
+</vts>
+```

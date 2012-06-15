@@ -18,7 +18,8 @@ _JSON_
 
 POST /translation_requests.json
 
-`{"vts":
+```json
+{"vts":
 	{	"status":"success",
 		"message":"Your translation request has been created.",
 		"translation_requests":[
@@ -30,13 +31,15 @@ POST /translation_requests.json
 			}
 		]
 	}
-}`
+}
+```
 
 _XML_
 
 POST /translation_requests.xml
 
-`<?xml version="1.0" encoding="UTF-8"?>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <vts>
 	<status>success</status>
 	<message>Your translation request has been created.</message>
@@ -47,4 +50,5 @@ POST /translation_requests.xml
 		<modified>2012-06-14 13:37:01</modified>
 		<expires_at>2012-06-15 13:37:01</expires_at>
 	</translation_requests>
-</vts>`
+</vts>
+```
