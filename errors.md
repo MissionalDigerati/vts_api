@@ -12,11 +12,12 @@ Your translation request token has expired, or your API key has been revoked.  I
 
 __JSON__
 
-`{"vts":
+```json
+{"vts":
 	{	"status":"error",
 		"message":"Unauthorized.  Your token has expired."
 	}
-}`
+}```
 
 __XML__
 
