@@ -3,6 +3,29 @@ Errors
 
 Here is a list of common errors you might experience in this API.
 
+401 Unauthorized
+----------------
+
+Your translation request token has expired, or your API key has been revoked.  If your translation request token expired,  you will need to request another token.  If your API key was revoked,  then you will need to contact the system admin. 
+
+**Example**
+
+__JSON__
+
+`{"vts":
+	{	"status":"error",
+		"message":"Unauthorized.  Your token has expired."
+	}
+}`
+
+__XML__
+
+`<?xml version="1.0" encoding="UTF-8"?>
+<vts>
+	<status>error</status>
+	<message>Unauthorized.  Your token has expired.</message>
+</vts>`
+
 404 Not Found
 -------------
 
