@@ -1,4 +1,4 @@
 API Documentation
 =================
 
-The documentation for the Video Translation Service API.
+The API documentation for the Video Translation Service API.
