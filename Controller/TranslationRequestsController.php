@@ -38,6 +38,7 @@ class TranslationRequestsController extends AppController {
 
 /**
  * index method
+ * /translation_requests.format
  *
  * @return void
  */
@@ -48,6 +49,7 @@ class TranslationRequestsController extends AppController {
 
 /**
  * view method
+ * /translation_requests/{token}.format
  *
  * @param string $id the id for the resource
  * @return void
@@ -65,6 +67,7 @@ class TranslationRequestsController extends AppController {
 
 /**
  * add method
+ * /translation_requests.format
  *
  * @return void
  */
@@ -84,6 +87,7 @@ class TranslationRequestsController extends AppController {
 
 /**
  * delete method
+ * /translation_requests/{token}.format
  *
  * @param string $id the id for the resource
  * @return void
