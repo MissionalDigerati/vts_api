@@ -80,6 +80,18 @@ describe "API::Clips" do
 			end
 		end
 		
+		it "should error if it does not exist" do
+			url = "#{ROOT_URL}clips.json"
+			begin
+			  request = RestClient.post url, :translation_request_token => "really", :video_file => '1/the_compassionate_father_1.mp4'
+			rescue => e
+				e.response.code.should eq(404)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('invalid resource')
+			end
+		end
+		
 	end
 	
 end
