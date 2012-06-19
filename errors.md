@@ -15,7 +15,7 @@ __JSON__
 ```json
 {"vts":
 	{	"status":"error",
-		"message":"Unauthorized.  Your token has expired."
+		"message":"Unauthorized.  Your token has expired, became invalid, or is missing."
 	}
 }
 ```
