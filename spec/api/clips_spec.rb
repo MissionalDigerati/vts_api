@@ -24,7 +24,7 @@ describe "API::Clips" do
 	
 	describe "POST /clips" do
 		
-		before(:all) do
+		before(:each) do
 			@translation_request = OBSFactory.translation_request
 		end
 		
@@ -49,6 +49,35 @@ describe "API::Clips" do
 			status = response.css("vts clips status").first.text
 			status.should_not be_nil
 			status.downcase.should eq('pending')
+		end
+		
+	end
+	
+	describe "must have valid Translation Request ID" do
+
+		it "should error if missing" do
+			url = "#{ROOT_URL}clips.json"
+			begin
+			  request = RestClient.post url, :translation_request_token => '', :video_file => '1/the_compassionate_father_1.mp4'
+			rescue => e
+				e.response.code.should eq(401)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('unauthorized')
+			end
+		end
+		
+		it "should error if expired" do
+			translation_request = OBSFactory.translation_request({expires_at: (Date.today - 1)})
+			url = "#{ROOT_URL}clips.json"
+			begin
+			  request = RestClient.post url, :translation_request_token => translation_request.token, :video_file => '1/the_compassionate_father_1.mp4'
+			rescue => e
+				e.response.code.should eq(401)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('unauthorized')
+			end
 		end
 		
 	end
