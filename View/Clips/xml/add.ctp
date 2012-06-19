@@ -20,7 +20,7 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-$data = array('vts' => array('status' => 'error', 'message' => 'Unauthorized.  Your token has expired, became invalid, or is missing.'));
+$data = array('vts' => array('status' => $status, 'message' => $message, 'clips' => array(0 => $clip['Clip'])));
 $xml = Xml::build($data);
 ?>
 <?php echo $xml->saveXML();?>

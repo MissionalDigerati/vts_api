@@ -27,7 +27,20 @@ App::uses('AppModel', 'Model');
  *
  */
 class TranslationRequest extends AppModel {
-	
+
+
+/**
+ * hasMany associations
+ *
+ * @var array
+ */
+	public $hasMany = array(
+		'Clip' => array(
+			'className' => 'Clip',
+			'dependent'    => true
+		)
+	);
+			
 /**
  * Check if the translation request token has expired
  *
@@ -43,13 +56,13 @@ class TranslationRequest extends AppModel {
 		}
 	}
 		
-	/**
-	 * Call the CakePHP beforeSave callback
-	 *
-	 * @return boolean
-	 * @access public
-	 * @author Johnathan Pulos
-	 */
+/**
+ * Call the CakePHP beforeSave callback
+ *
+ * @return boolean
+ * @access public
+ * @author Johnathan Pulos
+ */
 	public function beforeSave() {
 		if (!$this->id && !isset($this->data[$this->alias][$this->primaryKey])) {
 			$this->data['TranslationRequest']['token'] = "tr" . $this->createToken(25);

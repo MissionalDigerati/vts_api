@@ -20,5 +20,5 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-echo json_encode(array('vts' => array('status' => 'error', 'message' => 'Unauthorized.  Your token has expired.')));
+echo json_encode(array('vts' => array('status' => 'error', 'message' => 'Unauthorized.  Your token has expired, became invalid, or is missing.')));
 ?>
