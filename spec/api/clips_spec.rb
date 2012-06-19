@@ -39,7 +39,7 @@ describe "API::Clips" do
 			puts @audio_path
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
-				:video_file => '1/the_compassionate_father_1.mp4',
+				:video_file_location => '1/the_compassionate_father_1.mp4',
 				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 				:multipart => true
 			request.code.should eq(200)
@@ -50,6 +50,8 @@ describe "API::Clips" do
 			response['vts']['clips'][0]['status'].downcase.should eq('pending')
 			response['vts']['clips'][0]['audio_file_location'].should_not be_nil
 			response['vts']['clips'][0]['audio_file_location'].should_not be_empty
+			response['vts']['clips'][0]['video_file_location'].should_not be_nil
+			response['vts']['clips'][0]['video_file_location'].should_not be_empty
 			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clips'][0]['audio_file_location'])
 			File.exists?(@expected_file).should be_true
 		end
@@ -58,7 +60,7 @@ describe "API::Clips" do
 			url = "#{ROOT_URL}clips.xml"
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
-				:video_file => '1/the_compassionate_father_1.mp4',
+				:video_file_location => '1/the_compassionate_father_1.mp4',
 				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
 				:multipart => true
 			request.code.should eq(200)
@@ -71,6 +73,9 @@ describe "API::Clips" do
 			audio_file_url = response.css("vts clips audio_file_location").text
 			audio_file_url.should_not be_nil
 			audio_file_url.should_not be_empty
+			video_file_url = response.css("vts clips video_file_location").text
+			video_file_url.should_not be_nil
+			video_file_url.should_not be_empty
 			@expected_file = File.join(WEBROOT_DIRECTORY, audio_file_url)
 			File.exists?(@expected_file).should be_true
 		end
@@ -80,7 +85,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => @translation_request.token, 
-					:video_file => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '1/the_compassionate_father_1.mp4',
 					:multipart => true
 				puts "    requires an audio file - errored incorrectly"
 			rescue => e
@@ -97,7 +102,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => @translation_request.token, 
-					:video_file => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '1/the_compassionate_father_1.mp4',
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp4'), 'rb'),
 					:multipart => true
 				puts "    requires a mp3 audio file - errored incorrectly"
@@ -118,7 +123,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => '', 
-					:video_file => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '1/the_compassionate_father_1.mp4',
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 					:multipart => true
 				puts "    should error if missing - errored incorrectly"
@@ -137,7 +142,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => translation_request.token, 
-					:video_file => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '1/the_compassionate_father_1.mp4',
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 					:multipart => true
 				puts "    should error if expired - errored incorrectly"
@@ -155,7 +160,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => "really", 
-					:video_file => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '1/the_compassionate_father_1.mp4',
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 					:multipart => true
 				puts "    should error if it does not exist - errored incorrectly"

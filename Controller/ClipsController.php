@@ -29,10 +29,10 @@ class ClipsController extends AppController {
  * @author Johnathan Pulos
  */
 	public function beforeFilter() {
-		// if((!isset($this->request['data']['translation_request_token'])) || (empty($this->request['data']['translation_request_token']))) {
-		// 	throw new Exception(__('Your token is missing.'), 401);
-		// }
-		// $this->getTranslationRequest();
+		if((!isset($this->request['data']['translation_request_token'])) || (empty($this->request['data']['translation_request_token']))) {
+			throw new Exception(__('Your token is missing.'), 401);
+		}
+		$this->getTranslationRequest();
 		parent::beforeFilter();
 	}
 
@@ -76,8 +76,7 @@ class ClipsController extends AppController {
 		 * @author Johnathan Pulos
 		 */
 		$this->request->data['audio_file'] = $this->request->form['audio_file'];
-		// $this->request->data['translation_request_id'] = $this->currentTranslationRequestId;
-		$this->request->data['translation_request_id'] = 1;
+		$this->request->data['translation_request_id'] = $this->currentTranslationRequestId;
 		if ($this->Clip->save($this->request->data)) {
 			$id = $this->Clip->getLastInsertID();
 			$this->set('message', __('Your clip has been submitted.'));
