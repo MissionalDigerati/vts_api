@@ -92,6 +92,23 @@ describe "API::Clips" do
 			end
 		end
 		
+		it "requires a mp3 audio file" do
+			url = "#{ROOT_URL}clips.json"
+			begin
+			  request = RestClient.post url, 
+					:translation_request_token => @translation_request.token, 
+					:video_file => '1/the_compassionate_father_1.mp4',
+					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp4'), 'rb'),
+					:multipart => true
+				puts "    requires a mp3 audio file - errored incorrectly"
+			rescue => e
+				e.response.code.should eq(400)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('missing required attributes')
+				puts "    requires a mp3 audio file - errored correctly"
+			end
+		end
 	end
 	
 	describe "must have valid Translation Request ID" do

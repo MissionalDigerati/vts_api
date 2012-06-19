@@ -79,9 +79,7 @@ class TranslationRequestsController extends AppController {
 			$this->set('status', __('success'));
 			$this->set('translation_request', $this->TranslationRequest->read(null, $id));
 		} else {
-			$this->set('message', __('Your translation request has been denied.'));
-			$this->set('status', __('error'));
-			$this->set('translation_request', array());
+			throw new BadRequestException(__('Malformed request.'));
 		}
 	}
 
@@ -104,7 +102,7 @@ class TranslationRequestsController extends AppController {
 			$this->set('message', __('Your translation request has been deleted.'));
 			$this->set('status', __('success'));
 		}else {
-			throw new InternalErrorException();
+			throw new BadRequestException(__('Malformed request.'));
 		}
 	}
 
