@@ -11,7 +11,7 @@ class OBSFactories
 	def translation_request(options = {})
 		attributes = {token: token, expires_at: (Date.today + 1), modified: Date.today, created: Date.today}
 		attributes.merge!(options)
-		TranslationRequest.create(attributes)
+		TranslationRequest.create!(attributes)
 	end
 	
 	private

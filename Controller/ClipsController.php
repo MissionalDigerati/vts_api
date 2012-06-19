@@ -67,6 +67,10 @@ class ClipsController extends AppController {
  */
 	public function add() {
 		$this->Clip->create();
+		if((!isset($this->request->form['audio_file'])) || (empty($this->request->form['audio_file']))) {
+			print_r($this->request->form['audio_file']);
+			throw new BadRequestException(__('Missing attribute audio_file.'));
+		}
 		$this->request->data['translation_request_id'] = $this->currentTranslationRequestId;
 		if ($this->Clip->save($this->request->data)) {
 			$id = $this->Clip->getLastInsertID();
@@ -130,8 +134,17 @@ class ClipsController extends AppController {
  */
 	private function getTranslationRequest() {
 		$this->loadModel('TranslationRequest');
-		$currentTranslationRequest = $this->TranslationRequest->findByToken($this->request['data']['translation_request_token']);
-		if ((empty($currentTranslationRequest)) || (!$this->TranslationRequest->exists($currentTranslationRequest['TranslationRequest']['id']))) {
+		$currentTranslationRequest = $this->TranslationRequest->findByToken($this->cleanedToken($this->request['data']['translation_request_token']));
+		if (empty($currentTranslationRequest)) {
+			throw new NotFoundException(__('Invalid translation request.'));
+		}
+		/**
+		 * I have to force Cake to use this Translation Request, if not then the isExpired function gets the wrong Translation Request
+		 *
+		 * @author Johnathan Pulos
+		 */
+		$this->TranslationRequest->id = $currentTranslationRequest['TranslationRequest']['id'];
+		if (!$this->TranslationRequest->exists()) {
 			throw new NotFoundException(__('Invalid translation request.'));
 		}
 		if ($this->TranslationRequest->isExpired()) {

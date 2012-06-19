@@ -30,7 +30,13 @@ describe "API::Clips" do
 		
 		it "Create via JSON" do
 			url = "#{ROOT_URL}clips.json"
-			request = RestClient.post url, :translation_request_token => @translation_request.token, :video_file => '1/the_compassionate_father_1.mp4'
+			
+			puts @audio_path
+			request = RestClient.post url, 
+				:translation_request_token => @translation_request.token, 
+				:video_file => '1/the_compassionate_father_1.mp4',
+				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:multipart => true
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
@@ -41,7 +47,11 @@ describe "API::Clips" do
 		
 		it "Create via XML" do
 			url = "#{ROOT_URL}clips.xml"
-			request = RestClient.post url, :translation_request_token => @translation_request.token, :video_file => '1/the_compassionate_father_1.mp4'
+			request = RestClient.post url, 
+				:translation_request_token => @translation_request.token, 
+				:video_file => '1/the_compassionate_father_1.mp4',
+				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:multipart => true
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
@@ -51,6 +61,23 @@ describe "API::Clips" do
 			status.downcase.should eq('pending')
 		end
 		
+		it "requires an audio file" do
+			url = "#{ROOT_URL}clips.json"
+			begin
+			  request = RestClient.post url, 
+					:translation_request_token => @translation_request.token, 
+					:video_file => '1/the_compassionate_father_1.mp4',
+					:multipart => true
+				puts "    requires an audio file - errored incorrectly"
+			rescue => e
+				e.response.code.should eq(400)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('missing required attributes')
+				puts "    requires an audio file - errored correctly"
+			end
+		end
+		
 	end
 	
 	describe "must have valid Translation Request ID" do
@@ -58,37 +85,57 @@ describe "API::Clips" do
 		it "should error if missing" do
 			url = "#{ROOT_URL}clips.json"
 			begin
-			  request = RestClient.post url, :translation_request_token => '', :video_file => '1/the_compassionate_father_1.mp4'
+			  request = RestClient.post url, 
+					:translation_request_token => '', 
+					:video_file => '1/the_compassionate_father_1.mp4',
+					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+					:multipart => true
+				puts "    should error if missing - errored incorrectly"
 			rescue => e
 				e.response.code.should eq(401)
 				response = JSON.parse(e.response)
 				response['vts']['status'].should eq('error')
 				response['vts']['message'].downcase.should match('unauthorized')
+				puts "    should error if missing - errored correctly"
 			end
 		end
 		
 		it "should error if expired" do
-			translation_request = OBSFactory.translation_request({expires_at: (Date.today - 1)})
+			translation_request = OBSFactory.translation_request({expires_at: (Date.today - 4)})
+			puts translation_request.inspect
 			url = "#{ROOT_URL}clips.json"
 			begin
-			  request = RestClient.post url, :translation_request_token => translation_request.token, :video_file => '1/the_compassionate_father_1.mp4'
+			  request = RestClient.post url, 
+					:translation_request_token => translation_request.token, 
+					:video_file => '1/the_compassionate_father_1.mp4',
+					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+					:multipart => true
+				puts "    should error if expired - errored incorrectly"
+				puts request
 			rescue => e
 				e.response.code.should eq(401)
 				response = JSON.parse(e.response)
 				response['vts']['status'].should eq('error')
 				response['vts']['message'].downcase.should match('unauthorized')
+				puts "    should error if expired - errored correctly"
 			end
 		end
 		
 		it "should error if it does not exist" do
 			url = "#{ROOT_URL}clips.json"
 			begin
-			  request = RestClient.post url, :translation_request_token => "really", :video_file => '1/the_compassionate_father_1.mp4'
+			  request = RestClient.post url, 
+					:translation_request_token => "really", 
+					:video_file => '1/the_compassionate_father_1.mp4',
+					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+					:multipart => true
+				puts "    should error if it does not exist - errored incorrectly"
 			rescue => e
 				e.response.code.should eq(404)
 				response = JSON.parse(e.response)
 				response['vts']['status'].should eq('error')
 				response['vts']['message'].downcase.should match('invalid resource')
+				puts "    should error if it does not exist - errored correctly"
 			end
 		end
 		

@@ -66,6 +66,7 @@ describe "API::TranslationRequests" do
 				response['vts']['status'].should match('error')
 				response['vts']['message'].should_not be_empty
 				response['vts']['message'].downcase.should match('invalid resource')
+				puts "    404 Error (resource missing) via JSON - errored correctly"
 			end
 		end
 		
@@ -80,6 +81,7 @@ describe "API::TranslationRequests" do
 				response.css("vts status").text.should match('error')
 				response.css("vts message").text.should_not be_empty
 				response.css("vts message").text.downcase.should match('invalid resource')
+				puts "    404 Error (resource missing) via XML - errored correctly"
 			end
 		end
 		
@@ -153,6 +155,7 @@ describe "API::TranslationRequests" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
 			begin
 			  request = RestClient.get url, :content_type => :json, :accept => :json
+				puts "    401 Unauthorized on View action via JSON - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
 				response = JSON.parse(e.response)
@@ -160,6 +163,7 @@ describe "API::TranslationRequests" do
 				response['vts']['status'].should match('error')
 				response['vts']['message'].should_not be_empty
 				response['vts']['message'].downcase.should match('unauthorized')
+				puts "    401 Unauthorized on View action via JSON - errored correctly"
 			end
 		end
 		
@@ -167,6 +171,7 @@ describe "API::TranslationRequests" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
 			begin
 			  request = RestClient.get url, :content_type => :xml, :accept => :xml
+				puts "    401 Unauthorized on View action via XML - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
 				response = Nokogiri::XML(e.response)
@@ -176,6 +181,7 @@ describe "API::TranslationRequests" do
 				message = response.css("vts message").text
 				message.should_not be_empty
 				message.downcase.should match('unauthorized')
+				puts "    401 Unauthorized on View action via XML - errored correctly"
 			end
 		end
 		
@@ -183,6 +189,7 @@ describe "API::TranslationRequests" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
 			begin
 			  request = RestClient.delete url, :content_type => :json, :accept => :json
+				puts "    401 Unauthorized on Delete action via JSON - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
 				response = JSON.parse(e.response)
@@ -190,6 +197,7 @@ describe "API::TranslationRequests" do
 				response['vts']['status'].should match('error')
 				response['vts']['message'].should_not be_empty
 				response['vts']['message'].downcase.should match('unauthorized')
+				puts "    401 Unauthorized on Delete action via JSON - errored correctly"
 			end
 		end
 		
@@ -197,6 +205,7 @@ describe "API::TranslationRequests" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
 			begin
 			  request = RestClient.delete url, :content_type => :xml, :accept => :xml
+				puts "    401 Unauthorized on Delete action via XML - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
 				response = Nokogiri::XML(e.response)
@@ -206,6 +215,7 @@ describe "API::TranslationRequests" do
 				message = response.css("vts message").text
 				message.should_not be_empty
 				message.downcase.should match('unauthorized')
+				puts "    401 Unauthorized on Delete action via XML - errored correctly"
 			end
 		end
 		

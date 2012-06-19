@@ -80,5 +80,16 @@ class AppController extends Controller {
 			break;
 		}
 	}
+	/**
+	 * Cleans the token so it is only alphanumeric
+	 *
+	 * @param string $token the translation request token
+	 * @return string
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	public function cleanedToken($token) {
+		return ereg_replace("[^A-Za-z0-9]", "", $token);
+	}
 
 }
