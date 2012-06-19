@@ -68,9 +68,14 @@ class ClipsController extends AppController {
 	public function add() {
 		$this->Clip->create();
 		if((!isset($this->request->form['audio_file'])) || (empty($this->request->form['audio_file']))) {
-			print_r($this->request->form['audio_file']);
 			throw new BadRequestException(__('Missing attribute audio_file.'));
 		}
+		/**
+		 * files are in the form key, not data key.  So move it over so the Uploader is triggered
+		 *
+		 * @author Johnathan Pulos
+		 */
+		$this->request->data['audio_file'] = $this->request->form['audio_file'];
 		$this->request->data['translation_request_id'] = $this->currentTranslationRequestId;
 		if ($this->Clip->save($this->request->data)) {
 			$id = $this->Clip->getLastInsertID();

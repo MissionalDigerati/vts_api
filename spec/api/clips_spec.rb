@@ -26,6 +26,11 @@ describe "API::Clips" do
 		
 		before(:each) do
 			@translation_request = OBSFactory.translation_request
+			@expected_file = '';
+		end
+		
+		after(:each) do
+			File.delete(@expected_file) unless @expected_file.empty?
 		end
 		
 		it "Create via JSON" do
@@ -43,6 +48,10 @@ describe "API::Clips" do
 			response['vts']['message'].should match('has been submitted')
 			response['vts']['clips'][0]['status'].should_not be_nil
 			response['vts']['clips'][0]['status'].downcase.should eq('pending')
+			response['vts']['clips'][0]['audio_file_location'].should_not be_nil
+			response['vts']['clips'][0]['audio_file_location'].should_not be_empty
+			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clips'][0]['audio_file_location'])
+			File.exists?(@expected_file).should be_true
 		end
 		
 		it "Create via XML" do
@@ -50,7 +59,7 @@ describe "API::Clips" do
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
 				:video_file => '1/the_compassionate_father_1.mp4',
-				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
 				:multipart => true
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
@@ -59,6 +68,11 @@ describe "API::Clips" do
 			status = response.css("vts clips status").first.text
 			status.should_not be_nil
 			status.downcase.should eq('pending')
+			audio_file_url = response.css("vts clips audio_file_location").text
+			audio_file_url.should_not be_nil
+			audio_file_url.should_not be_empty
+			@expected_file = File.join(WEBROOT_DIRECTORY, audio_file_url)
+			File.exists?(@expected_file).should be_true
 		end
 		
 		it "requires an audio file" do
@@ -102,7 +116,6 @@ describe "API::Clips" do
 		
 		it "should error if expired" do
 			translation_request = OBSFactory.translation_request({expires_at: (Date.today - 4)})
-			puts translation_request.inspect
 			url = "#{ROOT_URL}clips.json"
 			begin
 			  request = RestClient.post url, 
@@ -111,7 +124,6 @@ describe "API::Clips" do
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 					:multipart => true
 				puts "    should error if expired - errored incorrectly"
-				puts request
 			rescue => e
 				e.response.code.should eq(401)
 				response = JSON.parse(e.response)

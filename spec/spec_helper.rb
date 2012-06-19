@@ -42,6 +42,7 @@ cleaner = DatabaseCleaner.new
 table_names = ['translation_requests', 'clips']
 OBSFactory = OBSFactories.new
 SPEC_DIRECTORY = File.dirname(__FILE__)
+WEBROOT_DIRECTORY = File.expand_path("../../webroot", __FILE__)
 
 # RSpec configuration
 RSpec.configure do |config|
