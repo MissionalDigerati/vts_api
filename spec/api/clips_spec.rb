@@ -316,6 +316,40 @@ describe "API::Clips" do
 		
 	end
 	
+	describe "DELETE clips/id" do
+		
+		before(:each) do
+			@translation_request = OBSFactory.translation_request
+			@clip = OBSFactory.clip({
+																:translation_request_id		 	=> @translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'PROCESSING'
+															})
+		end
+		
+		it "Delete and respond with JSON" do
+			url = "#{ROOT_URL}clips/#{@clip.id}.json"
+			request = RestClient.post url, {:translation_request_token => @translation_request.token, '_method' => 'DELETE'}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['status'].should eq('success')
+			response['vts']['message'].should match('has been deleted')
+			response['vts']['clips'].should be_empty
+		end
+		
+		it "Delete and respond with XML" do
+			url = "#{ROOT_URL}clips/#{@clip.id}.xml"
+			request = RestClient.post url, {:translation_request_token => @translation_request.token, '_method' => 'DELETE'}
+			request.code.should eq(200)
+			response = Nokogiri::XML(request)
+			response.css("vts status").first.text.should eq('success')
+			response.css("vts message").text.should match('has been deleted')
+			response.css("vts clips").children.length.should eq(0)
+		end
+		
+	end
+	
 	describe "must have valid Translation Request ID" do
 
 		it "should error if missing" do

@@ -137,18 +137,16 @@ class ClipsController extends AppController {
  * @return void
  */
 	public function delete($id = null) {
-		if (!$this->request->is('post')) {
-			throw new MethodNotAllowedException();
-		}
 		$this->Clip->id = $id;
 		if (!$this->Clip->exists()) {
 			throw new NotFoundException(__('Invalid clip'));
 		}
 		if ($this->Clip->delete()) {
-			$this->flash(__('Clip deleted'), array('action' => 'index'));
+			$this->set('message', __('Your clip has been deleted.'));
+			$this->set('status', __('success'));
+		}else {
+			throw new BadRequestException(__('Malformed request.'));
 		}
-		$this->flash(__('Clip was not deleted'), array('action' => 'index'));
-		$this->redirect(array('action' => 'index'));
 	}
 	
 /**
