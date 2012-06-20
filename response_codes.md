@@ -1,7 +1,7 @@
-Errors
-======
+API Response Codes
+==================
 
-Here is a list of common errors you might experience in this API.
+Here is a list of common response codes you might experience in this API.
 
 401 Unauthorized
 ----------------
