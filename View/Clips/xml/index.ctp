@@ -20,7 +20,7 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-$data = array('vts' => array('status' => 'success', 'message' => '', 'clips' => $clips));
+$data = array('vts' => array('status' => 'success', 'message' => '', 'ready_for_processing' => $ready_for_processing, 'clips' => $clips));
 $xml = Xml::build($data);
 ?>
 <?php echo $xml->saveXML();?>

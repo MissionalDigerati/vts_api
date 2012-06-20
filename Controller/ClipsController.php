@@ -50,6 +50,7 @@ class ClipsController extends AppController {
  */
 	public function index() {
 		$clips = array();
+		$ready_for_processing = 'YES';
 		$this->Clip->recursive = 0;
 		$current_clips = $this->Clip->find('all', array('conditions' => array('Clip.translation_request_id' => $this->currentTranslationRequestId)));
 		/**
@@ -59,8 +60,12 @@ class ClipsController extends AppController {
 		 */
 		foreach ($current_clips as $clip) {
 			array_push($clips, $clip['Clip']);
+			if($clip['Clip']['status'] != 'COMPLETE') {
+				$ready_for_processing = 'NO';
+			}
 		}
 		$this->set('clips', $clips);
+		$this->set('ready_for_processing', $ready_for_processing);
 	}
 
 /**

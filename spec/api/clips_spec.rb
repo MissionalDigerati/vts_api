@@ -265,20 +265,26 @@ describe "API::Clips" do
 																:translation_request_id		 	=> @translation_request.id, 
 																:audio_file_location 				=> '/really/made/up/file.mp3', 
 																:video_file_location 				=> 'unique/video/file.mp4',
-																:status 										=> 'PROCESSING'
+																:status 										=> 'COMPLETE'
 															})
 			@clip2 = OBSFactory.clip({
 																:translation_request_id		 	=> @translation_request.id, 
 																:audio_file_location 				=> '/really/made/up/file.mp3', 
 																:video_file_location 				=> 'unique/video/file.mp4',
-																:status 										=> 'PROCESSING'
+																:status 										=> 'COMPLETE'
 															})
-			@not_related_translation_request = OBSFactory.translation_request											
-			@not_related_clip = OBSFactory.clip({
-																:translation_request_id		 	=> @not_related_translation_request.id, 
+			@not_completed_translation_request = OBSFactory.translation_request											
+			@not_completed_clip1 = OBSFactory.clip({
+																:translation_request_id		 	=> @not_completed_translation_request.id, 
 																:audio_file_location 				=> '/really/made/up/file.mp3', 
 																:video_file_location 				=> 'unique/video/file.mp4',
 																:status 										=> 'PROCESSING'
+															})
+			@not_completed_clip2 = OBSFactory.clip({
+																:translation_request_id		 	=> @not_completed_translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'COMPLETE'
 															})
 			@expected_clips = Array.new
 			@expected_clips << @clip1.id
@@ -312,6 +318,22 @@ describe "API::Clips" do
 				clip.children.xpath("//translation_request_id").first.text.should eq("#{@translation_request.id}")
 				@expected_clips.include?(clip.children.xpath("//id").first.text.to_i).should be_true
 			end
+		end
+		
+		it "sets ready_for_processing to YES if all clips are COMPLETE" do
+			url = "#{ROOT_URL}clips.json"
+			request = RestClient.get url, {:params => {:translation_request_token => @translation_request.token}}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['ready_for_processing'].should eq('YES')
+		end
+		
+		it "sets ready_for_processing to NO if a clip is not COMPLETE" do
+			url = "#{ROOT_URL}clips.json"
+			request = RestClient.get url, {:params => {:translation_request_token => @not_completed_translation_request.token}}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['ready_for_processing'].should eq('NO')
 		end
 		
 	end
