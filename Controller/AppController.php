@@ -103,5 +103,21 @@ class AppController extends Controller {
 	public function cleanedToken($token) {
 		return ereg_replace("[^A-Za-z0-9]", "", $token);
 	}
+	
+	/**
+	 * Returns the value of the parameter based on the HTTP protocol
+	 *
+	 * @param string $key the key of the parameter
+	 * @return string
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	public function getParam($key) {
+		if($this->request->is('get')) {
+			return (isset($this->request->query[$key])) ? $this->request->query[$key] : '';
+		} else{
+			return (isset($this->request->data[$key])) ? $this->request->data[$key] : '';
+		}
+	}
 
 }

@@ -20,6 +20,12 @@ class ClipsController extends AppController {
  * @var array
  */
 	public $currentTranslationRequestId;
+/**
+ * The current token supplied to this controller
+ *
+ * @var string
+ */
+	public $currentToken;
 	
 /**
  * Call the CakePHP callback beforeFilter
@@ -29,7 +35,8 @@ class ClipsController extends AppController {
  * @author Johnathan Pulos
  */
 	public function beforeFilter() {
-		if((!isset($this->request['data']['translation_request_token'])) || (empty($this->request['data']['translation_request_token']))) {	
+		$this->currentToken = $this->cleanedToken($this->getParam('translation_request_token'));
+		if(empty($this->currentToken)) {
 			throw new Exception(__('Your token is missing.'), 401);
 		}
 		$this->getTranslationRequest();
@@ -143,7 +150,7 @@ class ClipsController extends AppController {
  */
 	private function getTranslationRequest() {
 		$this->loadModel('TranslationRequest');
-		$currentTranslationRequest = $this->TranslationRequest->findByToken($this->cleanedToken($this->request['data']['translation_request_token']));
+		$currentTranslationRequest = $this->TranslationRequest->findByToken($this->currentToken);
 		if (empty($currentTranslationRequest)) {
 			throw new NotFoundException(__('Invalid translation request.'));
 		}

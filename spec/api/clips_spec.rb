@@ -199,6 +199,65 @@ describe "API::Clips" do
 		
 	end
 	
+	describe "GET /clips/id" do
+		
+		before(:each) do
+			@translation_request = OBSFactory.translation_request
+			@clip = OBSFactory.clip({
+																:translation_request_id		 	=> @translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'PROCESSING'
+															})
+		end
+		
+		it "READ and respond with JSON" do
+			url = "#{ROOT_URL}clips/#{@clip.id}.json"
+			request = RestClient.get url, {:params => {:translation_request_token => @translation_request.token}}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['status'].should eq('success')
+			response['vts']['message'].should be_empty
+			response['vts']['clips'][0]['id'].should eq("#{@clip['id']}")
+			response['vts']['clips'][0]['audio_file_location'].should eq(@clip['audio_file_location'])
+			response['vts']['clips'][0]['video_file_location'].should eq("#{@clip['video_file_location']}")
+			response['vts']['clips'][0]['status'].should eq("#{@clip['status']}")
+		end
+		
+		it "READ and respond with XML" do
+			url = "#{ROOT_URL}clips/#{@clip.id}.xml"
+			request = RestClient.get url, {:params => {:translation_request_token => @translation_request.token}}
+			request.code.should eq(200)
+			response = Nokogiri::XML(request)
+			response.css("vts status").first.text.should eq('success')
+			response.css("vts message").text.should be_empty
+			status = response.css("vts clips status").first.text
+			status.should_not be_nil
+			status.should eq("#{@clip['status']}")
+			audio_file_url = response.css("vts clips audio_file_location").text
+			audio_file_url.should eq(@clip['audio_file_location'])
+			video_file_url = response.css("vts clips video_file_location").text
+			video_file_url.should eq("#{@clip['video_file_location']}")
+		end
+		
+		it "should throw 404 if incorrect resource" do
+			url = "#{ROOT_URL}clips/9999999999999999999999.json"
+			begin
+			  request = RestClient.get url, {:params => {:translation_request_token => @translation_request.token}}
+				puts "    should throw 404 if incorrect resource - errored incorrectly"
+			rescue => e
+			  e.response.code.should eq(404)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should_not be_empty
+				response['vts']['status'].should match('error')
+				response['vts']['message'].should_not be_empty
+				response['vts']['message'].downcase.should match('invalid resource')
+				puts "    should throw 404 if incorrect resource - errored correctly"
+			end
+		end
+	
+	end
+	
 	describe "must have valid Translation Request ID" do
 
 		it "should error if missing" do
