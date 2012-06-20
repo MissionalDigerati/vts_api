@@ -34,7 +34,7 @@ describe "API::Clips" do
 			File.delete(@expected_file) unless @expected_file.empty?
 		end
 		
-		it "Create via JSON" do
+		it "Create and respond with JSON" do
 			url = "#{ROOT_URL}clips.json"
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
@@ -55,7 +55,7 @@ describe "API::Clips" do
 			File.exists?(@expected_file).should be_true
 		end
 		
-		it "Create via XML" do
+		it "Create and respond with XML" do
 			url = "#{ROOT_URL}clips.xml"
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
@@ -127,7 +127,7 @@ describe "API::Clips" do
 			File.delete(@expected_file) unless @expected_file.empty?
 		end
 		
-		it "Modify via JSON" do
+		it "Modify and respond with JSON" do
 			url = "#{ROOT_URL}clips/#{@clip.id}.json"
 			expected_video_file_location = 'my/unique_file_url.mp4'
 			# We have a max filename size of 30 characters
@@ -152,7 +152,7 @@ describe "API::Clips" do
 			File.exists?(@expected_file).should be_true
 		end
 		
-		it "Modify via XML" do
+		it "Modify and respond with XML" do
 			url = "#{ROOT_URL}clips/#{@clip.id}.xml"
 			expected_video_file_location = 'my/unique_file_url.mp4'
 			# We have a max filename size of 30 characters

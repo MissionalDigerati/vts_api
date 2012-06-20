@@ -28,7 +28,7 @@ describe "API::TranslationRequests" do
 			@translation_request = OBSFactory.translation_request
 		end
 		
-		it "Read via JSON" do
+		it "Read and respond with JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
 			request = RestClient.get url
 			request.code.should eq(200)
@@ -40,7 +40,7 @@ describe "API::TranslationRequests" do
 			response['vts']['translation_requests'][0]['expires_at'].should eq("#{@translation_request['expires_at'].strftime("%Y-%m-%d %H:%M:%S")}")
 		end
 	
-		it "Read via XML" do
+		it "Read and respond with XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
 			request = RestClient.get url
 			request.code.should eq(200)
@@ -55,7 +55,7 @@ describe "API::TranslationRequests" do
 			expires.should eq("#{@translation_request['expires_at'].strftime("%Y-%m-%d %H:%M:%S")}")
 		end
 		
-		it "404 Error (resource missing) via JSON" do
+		it "404 Error (resource missing) and respond with JSON" do
 			url = "#{ROOT_URL}translation_requests/9999999999999.json"
 			begin
 			  request = RestClient.get url
@@ -66,11 +66,11 @@ describe "API::TranslationRequests" do
 				response['vts']['status'].should match('error')
 				response['vts']['message'].should_not be_empty
 				response['vts']['message'].downcase.should match('invalid resource')
-				puts "    404 Error (resource missing) via JSON - errored correctly"
+				puts "    404 Error (resource missing) and respond with JSON - errored correctly"
 			end
 		end
 		
-		it "404 Error (resource missing) via XML" do
+		it "404 Error (resource missing) and respond with XML" do
 			url = "#{ROOT_URL}translation_requests/9999999999999.xml"
 			begin
 			  request = RestClient.get url
@@ -81,14 +81,14 @@ describe "API::TranslationRequests" do
 				response.css("vts status").text.should match('error')
 				response.css("vts message").text.should_not be_empty
 				response.css("vts message").text.downcase.should match('invalid resource')
-				puts "    404 Error (resource missing) via XML - errored correctly"
+				puts "    404 Error (resource missing) and respond with XML - errored correctly"
 			end
 		end
 		
 	end
 	
 	describe "POST /translation_requests" do
-		it "Create via JSON" do
+		it "Create and respond with JSON" do
 			url = "#{ROOT_URL}translation_requests.json"
 			request = RestClient.post url, {}
 			request.code.should eq(200)
@@ -101,7 +101,7 @@ describe "API::TranslationRequests" do
 			response['vts']['translation_requests'][0]['expires_at'].should_not be_empty
 		end
 	
-		it "Create via XML" do
+		it "Create and respond with XML" do
 			url = "#{ROOT_URL}translation_requests.xml"
 			request = RestClient.post url, ""
 			request.code.should eq(200)
@@ -123,7 +123,7 @@ describe "API::TranslationRequests" do
 			@translation_request = OBSFactory.translation_request
 		end
 		
-		it "Delete via JSON" do
+		it "Delete and respond with JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
 			request = RestClient.delete url
 			request.code.should eq(200)
@@ -133,7 +133,7 @@ describe "API::TranslationRequests" do
 			response['vts']['translation_requests'].should be_empty
 		end
 	
-		it "Delete via XML" do
+		it "Delete and respond with XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
 			request = RestClient.delete url
 			request.code.should eq(200)
@@ -151,11 +151,11 @@ describe "API::TranslationRequests" do
 			@translation_request = OBSFactory.translation_request({expires_at: (Date.today - 1)})
 		end
 		
-		it "401 Unauthorized on View action via JSON" do
+		it "401 Unauthorized on View action and respond with JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
 			begin
 			  request = RestClient.get url
-				puts "    401 Unauthorized on View action via JSON - errored incorrectly"
+				puts "    401 Unauthorized on View action and respond with JSON - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
 				response = JSON.parse(e.response)
@@ -163,15 +163,15 @@ describe "API::TranslationRequests" do
 				response['vts']['status'].should match('error')
 				response['vts']['message'].should_not be_empty
 				response['vts']['message'].downcase.should match('unauthorized')
-				puts "    401 Unauthorized on View action via JSON - errored correctly"
+				puts "    401 Unauthorized on View action and respond with JSON - errored correctly"
 			end
 		end
 		
-		it "401 Unauthorized on View action via XML" do
+		it "401 Unauthorized on View action and respond with XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
 			begin
 			  request = RestClient.get url
-				puts "    401 Unauthorized on View action via XML - errored incorrectly"
+				puts "    401 Unauthorized on View action and respond with XML - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
 				response = Nokogiri::XML(e.response)
@@ -181,15 +181,15 @@ describe "API::TranslationRequests" do
 				message = response.css("vts message").text
 				message.should_not be_empty
 				message.downcase.should match('unauthorized')
-				puts "    401 Unauthorized on View action via XML - errored correctly"
+				puts "    401 Unauthorized on View action and respond with XML - errored correctly"
 			end
 		end
 		
-		it "401 Unauthorized on Delete action via JSON" do
+		it "401 Unauthorized on Delete action and respond with JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
 			begin
 			  request = RestClient.delete url
-				puts "    401 Unauthorized on Delete action via JSON - errored incorrectly"
+				puts "    401 Unauthorized on Delete action and respond with JSON - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
 				response = JSON.parse(e.response)
@@ -197,15 +197,15 @@ describe "API::TranslationRequests" do
 				response['vts']['status'].should match('error')
 				response['vts']['message'].should_not be_empty
 				response['vts']['message'].downcase.should match('unauthorized')
-				puts "    401 Unauthorized on Delete action via JSON - errored correctly"
+				puts "    401 Unauthorized on Delete action and respond with JSON - errored correctly"
 			end
 		end
 		
-		it "401 Unauthorized on Delete action via XML" do
+		it "401 Unauthorized on Delete action and respond with XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
 			begin
 			  request = RestClient.delete url
-				puts "    401 Unauthorized on Delete action via XML - errored incorrectly"
+				puts "    401 Unauthorized on Delete action and respond with XML - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
 				response = Nokogiri::XML(e.response)
@@ -215,7 +215,7 @@ describe "API::TranslationRequests" do
 				message = response.css("vts message").text
 				message.should_not be_empty
 				message.downcase.should match('unauthorized')
-				puts "    401 Unauthorized on Delete action via XML - errored correctly"
+				puts "    401 Unauthorized on Delete action and respond with XML - errored correctly"
 			end
 		end
 		
