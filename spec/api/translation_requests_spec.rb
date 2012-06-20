@@ -125,7 +125,7 @@ describe "API::TranslationRequests" do
 		
 		it "Delete and respond with JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
-			request = RestClient.delete url
+			request = RestClient.post url, '_method' => 'DELETE'
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
@@ -135,13 +135,13 @@ describe "API::TranslationRequests" do
 	
 		it "Delete and respond with XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
-			request = RestClient.delete url
+			request = RestClient.post url, '_method' => 'DELETE'
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
 			response.css("vts status").text.should eq('success')
 			response.css("vts message").text.should match('has been deleted')
 			translation_requests = response.css("vts translation_requests")
-			translation_requests.should_not be_empty
+			translation_requests.children.length.should eq(0)
 		end
 	end
 	
