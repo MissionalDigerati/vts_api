@@ -79,7 +79,13 @@ class AppController extends Controller {
 				}
 			break;
 			case 'delete':
-				if (!$this->request->is('delete')) {
+				/**
+				 * Due to cake's inability to handle PUT vars, and PHP's arcaic, stupid lack of sufficient support for PUT requests,
+				 * we have to use a old hack.  We will use _method to determin PUT requests, and send a POST request.
+				 *
+				 * @author Johnathan Pulos
+				 */
+				if ($this->request->is('get') || $this->request->is('put')) {
 					throw new MethodNotAllowedException();
 					exit;
 				}
