@@ -49,8 +49,18 @@ class ClipsController extends AppController {
  * @return void
  */
 	public function index() {
+		$clips = array();
 		$this->Clip->recursive = 0;
-		$this->set('clips', $this->paginate());
+		$current_clips = $this->Clip->find('all', array('conditions' => array('Clip.translation_request_id' => $this->currentTranslationRequestId)));
+		/**
+		 * Remove the Clip key
+		 *
+		 * @author Johnathan Pulos
+		 */
+		foreach ($current_clips as $clip) {
+			array_push($clips, $clip['Clip']);
+		}
+		$this->set('clips', $clips);
 	}
 
 /**

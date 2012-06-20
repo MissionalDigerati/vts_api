@@ -258,6 +258,64 @@ describe "API::Clips" do
 	
 	end
 	
+	describe "GET /clips" do
+		before(:each) do
+			@translation_request = OBSFactory.translation_request
+			@clip1 = OBSFactory.clip({
+																:translation_request_id		 	=> @translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'PROCESSING'
+															})
+			@clip2 = OBSFactory.clip({
+																:translation_request_id		 	=> @translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'PROCESSING'
+															})
+			@not_related_translation_request = OBSFactory.translation_request											
+			@not_related_clip = OBSFactory.clip({
+																:translation_request_id		 	=> @not_related_translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'PROCESSING'
+															})
+			@expected_clips = Array.new
+			@expected_clips << @clip1.id
+			@expected_clips << @clip2.id
+		end
+		
+		it "READ all clips for translation_request and respond with JSON" do
+			url = "#{ROOT_URL}clips.json"
+			request = RestClient.get url, {:params => {:translation_request_token => @translation_request.token}}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['status'].should eq('success')
+			response['vts']['message'].should be_empty
+			response['vts']['clips'].length.should eq(2)
+			response['vts']['clips'].each do |clip|
+				clip['translation_request_id'].should eq("#{@translation_request.id}")
+				@expected_clips.include?(clip['id'].to_i).should be_true
+			end
+		end
+		
+		it "READ all clips for translation_request and respond with XML" do
+			url = "#{ROOT_URL}clips.xml"
+			request = RestClient.get url, {:params => {:translation_request_token => @translation_request.token}}
+			request.code.should eq(200)
+			response = Nokogiri::XML(request)
+			response.css("vts status").first.text.should eq('success')
+			response.css("vts message").text.should be_empty
+			clips = response.css("vts clips")
+			clips.length.should eq(2)
+			clips.each do |clip|
+				clip.children.xpath("//translation_request_id").first.text.should eq("#{@translation_request.id}")
+				@expected_clips.include?(clip.children.xpath("//id").first.text.to_i).should be_true
+			end
+		end
+		
+	end
+	
 	describe "must have valid Translation Request ID" do
 
 		it "should error if missing" do
