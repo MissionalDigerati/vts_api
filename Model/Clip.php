@@ -59,4 +59,29 @@ class Clip extends AppModel {
 					)
 			)
 	);
+	
+	/**
+	 * Call the CakePHP beforeSave callback
+	 *
+	 * @return boolean
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+		public function beforeSave() {
+			if (!$this->id && !isset($this->data[$this->alias][$this->primaryKey])) {
+				/**
+				 * Put in any functionality for the add method
+				 *
+				 * @author Johnathan Pulos
+				 */
+			} else{
+				/**
+				 * Put in any functionality for the edit method
+				 *
+				 * @author Johnathan Pulos
+				 */
+			}
+			$this->data[$this->alias]['status'] = 'PENDING';
+			return true;
+		}
 }

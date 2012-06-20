@@ -180,6 +180,23 @@ describe "API::Clips" do
 			File.exists?(@expected_file).should be_true
 		end
 		
+		it "should set status to pending if modified" do
+			clip = OBSFactory.clip({:translation_request_id => @translation_request.id, :status => 'COMPLETE'})
+			url = "#{ROOT_URL}clips/#{clip.id}.json"
+			# We have a max filename size of 30 characters
+			#
+			request = RestClient.post url, 
+				:translation_request_token => @translation_request.token, 
+				:video_file_location => '',
+				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:multipart => true,
+				'_method' => 'PUT'
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['clips'][0]['status'].should_not be_nil
+			response['vts']['clips'][0]['status'].downcase.should eq('pending')
+		end
+		
 	end
 	
 	describe "must have valid Translation Request ID" do
