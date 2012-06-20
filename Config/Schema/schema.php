@@ -26,7 +26,7 @@ class ApiVideoTranslatorSchema extends CakeSchema {
 		'translation_request_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'title' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'language' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
-		'status' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'status' => array('type' => 'string', 'null' => true, 'default' => 'PENDING', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'completed_at' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
