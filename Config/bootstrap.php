@@ -141,5 +141,5 @@ CakePlugin::load('Uploader');
  * @return string
  */
 function formatFileName($name, $field, $file) {
-	return md5($name);
+	return md5(trim($name));
 }

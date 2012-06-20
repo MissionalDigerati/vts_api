@@ -19,6 +19,7 @@
 #
 require 'spec_helper'
 require'date'
+require 'digest/md5'
 
 describe "API::Clips" do
 	
@@ -118,7 +119,7 @@ describe "API::Clips" do
 		
 		before(:each) do
 			@translation_request = OBSFactory.translation_request
-			@clip = OBSFactory.clip({:translation_request_id => @translation_request.id, :audio_file_location => 'made/up/file.mp3'})
+			@clip = OBSFactory.clip({:translation_request_id => @translation_request.id, :audio_file_location => '/made/up/file.mp3'})
 			@expected_file = '';
 		end
 		
@@ -129,6 +130,9 @@ describe "API::Clips" do
 		it "Modify via JSON" do
 			url = "#{ROOT_URL}clips/#{@clip.id}.json"
 			expected_video_file_location = 'my/unique_file_url.mp4'
+			# We have a max filename size of 30 characters
+			#
+			expected_audio_file_name = "#{Digest::MD5.hexdigest('23_1.mp3')}"[0,30]
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
 				:video_file_location => expected_video_file_location,
@@ -141,9 +145,38 @@ describe "API::Clips" do
 			response['vts']['message'].should match('has been modified')
 			response['vts']['clips'][0]['status'].should_not be_nil
 			response['vts']['clips'][0]['status'].downcase.should eq('pending')
-			response['vts']['clips'][0]['audio_file_location'].should_not eq('made/up/file.mp3')
+			response['vts']['clips'][0]['audio_file_location'].should_not eq('/made/up/file.mp3')
+			response['vts']['clips'][0]['audio_file_location'].should eq("/files/clips/#{expected_audio_file_name}.mp3")
 			response['vts']['clips'][0]['video_file_location'].should eq(expected_video_file_location)
 			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clips'][0]['audio_file_location'])
+			File.exists?(@expected_file).should be_true
+		end
+		
+		it "Modify via XML" do
+			url = "#{ROOT_URL}clips/#{@clip.id}.xml"
+			expected_video_file_location = 'my/unique_file_url.mp4'
+			# We have a max filename size of 30 characters
+			#
+			expected_audio_file_name = "#{Digest::MD5.hexdigest('23_2.mp3')}"[0,30]
+			request = RestClient.post url, 
+				:translation_request_token => @translation_request.token, 
+				:video_file_location => expected_video_file_location,
+				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
+				:multipart => true,
+				'_method' => 'PUT'
+			request.code.should eq(200)
+			response = Nokogiri::XML(request)
+			response.css("vts status").first.text.should eq('success')
+			response.css("vts message").text.should match('has been modified')
+			status = response.css("vts clips status").first.text
+			status.should_not be_nil
+			status.downcase.should eq('pending')
+			audio_file_url = response.css("vts clips audio_file_location").text
+			audio_file_url.should_not eq('/made/up/file.mp3')
+			audio_file_url.should eq("/files/clips/#{expected_audio_file_name}.mp3")
+			video_file_url = response.css("vts clips video_file_location").text
+			video_file_url.should eq(expected_video_file_location)
+			@expected_file = File.join(WEBROOT_DIRECTORY, audio_file_url)
 			File.exists?(@expected_file).should be_true
 		end
 		
