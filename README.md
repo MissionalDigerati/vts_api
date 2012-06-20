@@ -16,12 +16,12 @@ This API use the power of HTTP request protocols.  These are the supported HTTP 
 REST
 ----
 
-This API conforms to the design principles of Representational State Transfer (REST). Simply change the format extension a request to get results in the format of your choice.  We currently accept the JSON and XML format.
+This API conforms to the design principles of Representational State Transfer (REST). Simply change the format extension a request to get results in the format of your choice.  We currently accept the [JSON](http://en.wikipedia.org/wiki/json) and [XML](http://en.wikipedia.org/wiki/XML) format.
 
 Form Based Parameters
 ---------------------
 
-Currently this API only accepts form based data submission.  All parameters should have a content type of `application/x-www-form-urlencoded` or `multipart/form-data` .
+Currently this API only accepts form based data submission.  All parameters should have a content type of `application/x-www-form-urlencoded` or `multipart/form-data`.
 
 
 
