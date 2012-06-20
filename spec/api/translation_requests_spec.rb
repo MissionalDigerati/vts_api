@@ -30,7 +30,7 @@ describe "API::TranslationRequests" do
 		
 		it "Read via JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
-			request = RestClient.get url, :content_type => :json, :accept => :json
+			request = RestClient.get url
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
@@ -42,7 +42,7 @@ describe "API::TranslationRequests" do
 	
 		it "Read via XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
-			request = RestClient.get url, :content_type => :xml, :accept => :xml
+			request = RestClient.get url
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
 			response.css("vts status").text.should eq('success')
@@ -58,7 +58,7 @@ describe "API::TranslationRequests" do
 		it "404 Error (resource missing) via JSON" do
 			url = "#{ROOT_URL}translation_requests/9999999999999.json"
 			begin
-			  request = RestClient.get url, :content_type => :json, :accept => :json
+			  request = RestClient.get url
 			rescue => e
 			  e.response.code.should eq(404)
 				response = JSON.parse(e.response)
@@ -73,7 +73,7 @@ describe "API::TranslationRequests" do
 		it "404 Error (resource missing) via XML" do
 			url = "#{ROOT_URL}translation_requests/9999999999999.xml"
 			begin
-			  request = RestClient.get url, :content_type => :xml, :accept => :xml
+			  request = RestClient.get url
 			rescue => e
 			  e.response.code.should eq(404)
 				response = Nokogiri::XML(e.response)
@@ -90,7 +90,7 @@ describe "API::TranslationRequests" do
 	describe "POST /translation_requests" do
 		it "Create via JSON" do
 			url = "#{ROOT_URL}translation_requests.json"
-			request = RestClient.post url, {}.to_json, :content_type => :json, :accept => :json
+			request = RestClient.post url, {}
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
@@ -103,7 +103,7 @@ describe "API::TranslationRequests" do
 	
 		it "Create via XML" do
 			url = "#{ROOT_URL}translation_requests.xml"
-			request = RestClient.post url, "", :content_type => :xml, :accept => :xml
+			request = RestClient.post url, ""
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
 			response.css("vts status").text.should eq('success')
@@ -125,7 +125,7 @@ describe "API::TranslationRequests" do
 		
 		it "Delete via JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
-			request = RestClient.delete url, :content_type => :json, :accept => :json
+			request = RestClient.delete url
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
@@ -135,7 +135,7 @@ describe "API::TranslationRequests" do
 	
 		it "Delete via XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
-			request = RestClient.delete url, :content_type => :xml, :accept => :xml
+			request = RestClient.delete url
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
 			response.css("vts status").text.should eq('success')
@@ -154,7 +154,7 @@ describe "API::TranslationRequests" do
 		it "401 Unauthorized on View action via JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
 			begin
-			  request = RestClient.get url, :content_type => :json, :accept => :json
+			  request = RestClient.get url
 				puts "    401 Unauthorized on View action via JSON - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
@@ -170,7 +170,7 @@ describe "API::TranslationRequests" do
 		it "401 Unauthorized on View action via XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
 			begin
-			  request = RestClient.get url, :content_type => :xml, :accept => :xml
+			  request = RestClient.get url
 				puts "    401 Unauthorized on View action via XML - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
@@ -188,7 +188,7 @@ describe "API::TranslationRequests" do
 		it "401 Unauthorized on Delete action via JSON" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
 			begin
-			  request = RestClient.delete url, :content_type => :json, :accept => :json
+			  request = RestClient.delete url
 				puts "    401 Unauthorized on Delete action via JSON - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)
@@ -204,7 +204,7 @@ describe "API::TranslationRequests" do
 		it "401 Unauthorized on Delete action via XML" do
 			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
 			begin
-			  request = RestClient.delete url, :content_type => :xml, :accept => :xml
+			  request = RestClient.delete url
 				puts "    401 Unauthorized on Delete action via XML - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(401)

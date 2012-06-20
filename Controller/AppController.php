@@ -40,13 +40,13 @@ class AppController extends Controller {
 	public $components = array('DebugKit.Toolbar');
 	
 	/**
-	 * CakePHP callback beforeRender
+	 * CakePHP callback beforeFilter
 	 *
 	 * @return void
 	 * @access public
 	 * @author Johnathan Pulos
 	 */
-	public function beforeRender() {
+	public function beforeFilter() {
 		/**
 		 * Make sure they are using the correct HTTP methods
 		 *
@@ -67,7 +67,13 @@ class AppController extends Controller {
 				}
 			break;
 			case 'edit':
-				if (!$this->request->is('put')) {
+				/**
+				 * Due to cake's inability to handle PUT vars, and PHP's arcaic, stupid lack of sufficient support for PUT requests,
+				 * we have to use a old hack.  We will use _method to determin PUT requests, and send a POST request.
+				 *
+				 * @author Johnathan Pulos
+				 */
+				if ($this->request->is('get') || $this->request->is('delete')) {
 					throw new MethodNotAllowedException();
 					exit;
 				}

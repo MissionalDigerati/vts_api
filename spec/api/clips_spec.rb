@@ -35,8 +35,6 @@ describe "API::Clips" do
 		
 		it "Create via JSON" do
 			url = "#{ROOT_URL}clips.json"
-			
-			puts @audio_path
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
 				:video_file_location => '1/the_compassionate_father_1.mp4',
@@ -114,6 +112,41 @@ describe "API::Clips" do
 				puts "    requires a mp3 audio file - errored correctly"
 			end
 		end
+	end
+	
+	describe "PUT clips/id" do
+		
+		before(:each) do
+			@translation_request = OBSFactory.translation_request
+			@clip = OBSFactory.clip({:translation_request_id => @translation_request.id, :audio_file_location => 'made/up/file.mp3'})
+			@expected_file = '';
+		end
+		
+		after(:each) do
+			File.delete(@expected_file) unless @expected_file.empty?
+		end
+		
+		it "Modify via JSON" do
+			url = "#{ROOT_URL}clips/#{@clip.id}.json"
+			expected_video_file_location = 'my/unique_file_url.mp4'
+			request = RestClient.post url, 
+				:translation_request_token => @translation_request.token, 
+				:video_file_location => expected_video_file_location,
+				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:multipart => true,
+				'_method' => 'PUT'
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['status'].should eq('success')
+			response['vts']['message'].should match('has been modified')
+			response['vts']['clips'][0]['status'].should_not be_nil
+			response['vts']['clips'][0]['status'].downcase.should eq('pending')
+			response['vts']['clips'][0]['audio_file_location'].should_not eq('made/up/file.mp3')
+			response['vts']['clips'][0]['video_file_location'].should eq(expected_video_file_location)
+			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clips'][0]['audio_file_location'])
+			File.exists?(@expected_file).should be_true
+		end
+		
 	end
 	
 	describe "must have valid Translation Request ID" do

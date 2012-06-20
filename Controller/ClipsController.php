@@ -29,7 +29,7 @@ class ClipsController extends AppController {
  * @author Johnathan Pulos
  */
 	public function beforeFilter() {
-		if((!isset($this->request['data']['translation_request_token'])) || (empty($this->request['data']['translation_request_token']))) {
+		if((!isset($this->request['data']['translation_request_token'])) || (empty($this->request['data']['translation_request_token']))) {	
 			throw new Exception(__('Your token is missing.'), 401);
 		}
 		$this->getTranslationRequest();
@@ -98,16 +98,19 @@ class ClipsController extends AppController {
 		if (!$this->Clip->exists()) {
 			throw new NotFoundException(__('Invalid clip'));
 		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Clip->save($this->request->data)) {
-				$this->flash(__('The clip has been saved.'), array('action' => 'index'));
-			} else {
-			}
+		/**
+		 * files are in the form key, not data key.  So move it over so the Uploader is triggered
+		 *
+		 * @author Johnathan Pulos
+		 */
+		$this->request->data['audio_file'] = $this->request->form['audio_file'];
+		if ($this->Clip->save($this->request->data)) {
+			$this->set('message', __('Your clip has been modified.'));
+			$this->set('status', __('success'));
+			$this->set('clip', $this->Clip->read(null, $id));
 		} else {
-			$this->request->data = $this->Clip->read(null, $id);
+			throw new BadRequestException(__('Missing attribute audio_file.'));
 		}
-		$translationRequests = $this->Clip->TranslationRequest->find('list');
-		$this->set(compact('translationRequests'));
 	}
 
 /**
