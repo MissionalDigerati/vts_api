@@ -62,4 +62,60 @@ describe "API::MasterRecordings" do
 		
 	end
 	
+	describe "must have valid Translation Request ID" do
+
+		it "should error if missing" do
+			url = "#{ROOT_URL}master_recordings.json"
+			begin
+			  request = RestClient.post url, 
+					:translation_request_token => '', 
+					:title => 'The Compassionate Father',
+					:language => 'Greek'
+				puts "    should error if missing - errored incorrectly"
+			rescue => e
+				e.response.code.should eq(401)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('unauthorized')
+				puts "    should error if missing - errored correctly"
+			end
+		end
+		
+		it "should error if expired" do
+			translation_request = OBSFactory.translation_request({expires_at: (Date.today - 4)})
+			url = "#{ROOT_URL}master_recordings.json"
+			begin
+			  request = RestClient.post url, 
+					:translation_request_token => translation_request.token, 
+					:title => 'The Compassionate Father',
+					:language => 'Greek'
+				puts "    should error if expired - errored incorrectly"
+			rescue => e
+				e.response.code.should eq(401)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('unauthorized')
+				puts "    should error if expired - errored correctly"
+			end
+		end
+		
+		it "should error if it does not exist" do
+			url = "#{ROOT_URL}master_recordings.json"
+			begin
+				request = RestClient.post url, 
+					:translation_request_token => 'whyohwhy', 
+					:title => 'The Compassionate Father',
+					:language => 'Greek'
+				puts "    should error if it does not exist - errored incorrectly"
+			rescue => e
+				e.response.code.should eq(404)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('invalid resource')
+				puts "    should error if it does not exist - errored correctly"
+			end
+		end
+		
+	end
+	
 end

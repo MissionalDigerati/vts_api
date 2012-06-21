@@ -16,6 +16,18 @@ class MasterRecordingsController extends AppController {
 	public $components = array('RequestHandler');
 
 /**
+ * Call the CakePHP callback beforeFilter
+ *
+ * @return void
+ * @access public
+ * @author Johnathan Pulos
+ */
+	public function beforeFilter() {
+		$this->mustHaveValidToken();
+		parent::beforeFilter();
+	}
+
+/**
  * index method
  *
  * @return void
