@@ -96,17 +96,15 @@ class MasterRecordingsController extends AppController {
  * @return void
  */
 	public function delete($id = null) {
-		if (!$this->request->is('post')) {
-			throw new MethodNotAllowedException();
-		}
 		$this->MasterRecording->id = $id;
 		if (!$this->MasterRecording->exists()) {
-			throw new NotFoundException(__('Invalid master recording'));
+			throw new NotFoundException(__('The master recording does not exist.'));
 		}
 		if ($this->MasterRecording->delete()) {
-			$this->flash(__('Master recording deleted'), array('action' => 'index'));
+			$this->set('message', __('Your master recording has been deleted.'));
+			$this->set('status', __('success'));
+		}else {
+			throw new BadRequestException(__('There was a problem with your request.'));
 		}
-		$this->flash(__('Master recording was not deleted'), array('action' => 'index'));
-		$this->redirect(array('action' => 'index'));
 	}
 }
