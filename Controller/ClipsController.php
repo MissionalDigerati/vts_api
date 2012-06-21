@@ -13,19 +13,6 @@ class ClipsController extends AppController {
  * @var array
  */
 	public $components = array('RequestHandler');
-
-/**
- * The current translation request id
- *
- * @var array
- */
-	public $currentTranslationRequestId;
-/**
- * The current token supplied to this controller
- *
- * @var string
- */
-	public $currentToken;
 	
 /**
  * Call the CakePHP callback beforeFilter
@@ -35,11 +22,7 @@ class ClipsController extends AppController {
  * @author Johnathan Pulos
  */
 	public function beforeFilter() {
-		$this->currentToken = $this->cleanedToken($this->getParam('translation_request_token'));
-		if(empty($this->currentToken)) {
-			throw new Exception(__('Your token is missing.'), 401);
-		}
-		$this->getTranslationRequest();
+		$this->mustHaveValidToken();
 		parent::beforeFilter();
 	}
 
@@ -154,31 +137,4 @@ class ClipsController extends AppController {
 		}
 	}
 	
-/**
- * Get the current translation request
- *
- * @return void
- * @access private
- * @author Johnathan Pulos
- */
-	private function getTranslationRequest() {
-		$this->loadModel('TranslationRequest');
-		$currentTranslationRequest = $this->TranslationRequest->findByToken($this->currentToken);
-		if (empty($currentTranslationRequest)) {
-			throw new NotFoundException(__('Invalid translation request.'));
-		}
-		/**
-		 * I have to force Cake to use this Translation Request, if not then the isExpired function gets the wrong Translation Request
-		 *
-		 * @author Johnathan Pulos
-		 */
-		$this->TranslationRequest->id = $currentTranslationRequest['TranslationRequest']['id'];
-		if (!$this->TranslationRequest->exists()) {
-			throw new NotFoundException(__('Invalid translation request.'));
-		}
-		if ($this->TranslationRequest->isExpired()) {
-			throw new Exception(__('Your token has expired.'), 401);
-		}
-		$this->currentTranslationRequestId = $currentTranslationRequest['TranslationRequest']['id'];
-	}
 }
