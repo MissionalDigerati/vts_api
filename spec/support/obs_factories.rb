@@ -5,6 +5,8 @@ class TranslationRequest < ActiveRecord::Base
 end
 class Clip < ActiveRecord::Base
 end
+class MasterRecording < ActiveRecord::Base
+end
 
 class OBSFactories
 	
@@ -23,6 +25,15 @@ class OBSFactories
 		attributes = {:translation_request_id => translation_request.id, :audio_file_location => 'files/clips/fake_file.mp3', :video_file_location => '1/the_compassionate_father_1.mp4', :modified => Date.today, :created => Date.today}
 		attributes.merge!(options)
 		Clip.create!(attributes)
+	end
+	
+	# create a master recording
+	#
+	def master_recording(options = {})
+		translation_request = self.translation_request
+		attributes = {:translation_request_id => translation_request.id, :title => 'My Master Recording', :language => 'German', :status => 'PENDING', :modified => Date.today, :created => Date.today}
+		attributes.merge!(options)
+		MasterRecording.create!(attributes)
 	end
 	
 	private

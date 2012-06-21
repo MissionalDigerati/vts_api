@@ -34,8 +34,8 @@ class MasterRecordingsController extends AppController {
  * @return void
  */
 	public function index() {
-		$this->MasterRecording->recursive = 0;
-		$this->set('masterRecordings', $this->paginate());
+		// $this->MasterRecording->recursive = 0;
+		// $this->set('masterRecordings', $this->paginate());
 	}
 
 /**
@@ -49,7 +49,7 @@ class MasterRecordingsController extends AppController {
 		if (!$this->MasterRecording->exists()) {
 			throw new NotFoundException(__('The master recording does not exist.'));
 		}
-		$this->set('masterRecording', $this->MasterRecording->read(null, $id));
+		$this->set('master_recording', $this->MasterRecording->read(null, $id));
 	}
 
 /**
