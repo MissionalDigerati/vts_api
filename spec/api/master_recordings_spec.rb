@@ -25,6 +25,12 @@ describe "API::MasterRecordings" do
 		
 		before(:each) do
 			@translation_request = OBSFactory.translation_request
+			@clip1 = OBSFactory.clip({
+																:translation_request_id		 	=> @translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'COMPLETE'
+															})
 		end
 		
 		it "Create and respond with JSON" do
@@ -58,6 +64,50 @@ describe "API::MasterRecordings" do
 			status.downcase.should eq('pending')
 			response.css("vts master_recordings title").text.should eq('The Feeding of 500')
 			response.css("vts master_recordings language").text.should eq('Spanish')
+		end
+		
+		describe "Should return valid errors" do
+			
+			it "Requires a title" do
+				url = "#{ROOT_URL}master_recordings.json"
+				begin
+					request = RestClient.post url, 
+						:translation_request_token => @translation_request.token, 
+						:title => '',
+						:language => 'Greek'
+					puts "      Requires a title - errored incorrectly"
+				rescue => e
+					e.response.code.should eq(400)
+					response = JSON.parse(e.response)
+					response['vts']['status'].should_not be_empty
+					response['vts']['status'].should match('error')
+					response['vts']['message'].should_not be_empty
+					response['vts']['message'].downcase.should match('missing required attributes')
+					response['vts']['details'].downcase.should match('supply a valid title')
+					puts "      Requires a title - errored correctly"
+				end
+			end
+			
+			it "Requires a language" do
+				url = "#{ROOT_URL}master_recordings.json"
+				begin
+					request = RestClient.post url, 
+						:translation_request_token => @translation_request.token, 
+						:title => 'My great master recording',
+						:language => ''
+					puts "      Requires a language - errored incorrectly"
+				rescue => e
+					e.response.code.should eq(400)
+					response = JSON.parse(e.response)
+					response['vts']['status'].should_not be_empty
+					response['vts']['status'].should match('error')
+					response['vts']['message'].should_not be_empty
+					response['vts']['message'].downcase.should match('missing required attributes')
+					response['vts']['details'].downcase.should match('supply a valid language')
+					puts "      Requires a language - errored correctly"
+				end
+			end
+			
 		end
 		
 	end
@@ -113,6 +163,58 @@ describe "API::MasterRecordings" do
 				response['vts']['status'].should eq('error')
 				response['vts']['message'].downcase.should match('invalid resource')
 				puts "    should error if it does not exist - errored correctly"
+			end
+		end
+		
+	end
+	
+	describe "must have completed clips" do
+		
+		before(:each) do
+			@translation_request = OBSFactory.translation_request
+		end
+		
+		it "requires at least 1 completed clip" do
+			begin
+				url = "#{ROOT_URL}master_recordings.json"
+				request = RestClient.post url, 
+					:translation_request_token => @translation_request.token, 
+					:title => 'The Compassionate Man',
+					:language => 'Portugese'
+				puts request
+				puts "    requires at least 1 completed clip - errored incorrectly"	
+			rescue => e
+				e.response.code.should eq(401)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('unauthorized')
+				response['vts']['details'].downcase.should match('at least 1 clip')
+				puts "    requires at least 1 completed clip - errored correctly"
+			end
+		end
+		
+		it "requires all clips to be completed" do
+			clip1 = OBSFactory.clip({
+																:translation_request_id		 	=> @translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'PENDING'
+															})
+			begin
+				url = "#{ROOT_URL}master_recordings.json"
+				request = RestClient.post url, 
+					:translation_request_token => @translation_request.token, 
+					:title => 'The Compassionate Man',
+					:language => 'Portugese'
+				puts request
+				puts "    requires all clips to be completed - errored incorrectly"	
+			rescue => e
+				e.response.code.should eq(401)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should eq('error')
+				response['vts']['message'].downcase.should match('unauthorized')
+				response['vts']['details'].downcase.should match('all clips need a status of complete')
+				puts "    requires all clips to be completed - errored correctly"
 			end
 		end
 		

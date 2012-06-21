@@ -59,6 +59,7 @@ describe "API::TranslationRequests" do
 			url = "#{ROOT_URL}translation_requests/9999999999999.json"
 			begin
 			  request = RestClient.get url
+				puts "    404 Error (resource missing) and respond with JSON - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(404)
 				response = JSON.parse(e.response)
@@ -74,6 +75,7 @@ describe "API::TranslationRequests" do
 			url = "#{ROOT_URL}translation_requests/9999999999999.xml"
 			begin
 			  request = RestClient.get url
+				puts "    404 Error (resource missing) and respond with XML - errored incorrectly"
 			rescue => e
 			  e.response.code.should eq(404)
 				response = Nokogiri::XML(e.response)

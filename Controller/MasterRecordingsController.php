@@ -17,6 +17,14 @@ class MasterRecordingsController extends AppController {
  */
 	public function beforeFilter() {
 		$this->mustHaveValidToken();
+		if($this->currentTranslationRequestId != '') {
+			$this->loadModel('Clip');
+			if($this->Clip->readyForMasterRecording($this->currentTranslationRequestId) === false) {
+				throw new Exception(__('To access master recordings,  the translation request must have at least 1 clip, and all clips need a status of complete.'), 401);
+			}
+		}else{
+			throw new Exception(__('Your translation request token is missing.'), 401);
+		}
 		parent::beforeFilter();
 	}
 
@@ -39,7 +47,7 @@ class MasterRecordingsController extends AppController {
 	public function view($id = null) {
 		$this->MasterRecording->id = $id;
 		if (!$this->MasterRecording->exists()) {
-			throw new NotFoundException(__('Invalid master recording'));
+			throw new NotFoundException(__('The master recording does not exist.'));
 		}
 		$this->set('masterRecording', $this->MasterRecording->read(null, $id));
 	}
@@ -57,7 +65,7 @@ class MasterRecordingsController extends AppController {
 			$this->set('status', __('success'));
 			$this->set('master_recording', $this->MasterRecording->read(null, $id));
 		}else {
-			throw new BadRequestException(__('Missing attribute audio_file.'));
+			throw new BadRequestException($this->MasterRecording->getValidationErrorResponse());
 		}
 	}
 

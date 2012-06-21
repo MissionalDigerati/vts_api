@@ -84,4 +84,26 @@ class Clip extends AppModel {
 			$this->data[$this->alias]['status'] = 'PENDING';
 			return true;
 		}
+	/**
+	 * Iterates over all clips for a specific translation request, and verifies it is ready for a master recording
+	 *
+	 * @param string $translation_request_id Clip.translation_request_id
+	 * @return boolean
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	public function readyForMasterRecording($translation_request_id) {
+		$ready = true;
+		$clips = $this->find('all', array('conditions' => array('Clip.translation_request_id' => $translation_request_id)));
+		if(count($clips) == 0) {
+			$ready = false;
+		}else {
+			foreach ($clips as $clip) {
+				if($clip['Clip']['status'] != 'COMPLETE') {
+					$ready = false;
+				}
+			}
+		}
+		return $ready;
+	}
 }
