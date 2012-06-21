@@ -168,6 +168,78 @@ describe "API::MasterRecordings" do
 		
 	end
 	
+	describe "PUT /master_recordings/id" do
+		
+		before(:each) do
+			@translation_request = OBSFactory.translation_request
+			@clip1 = OBSFactory.clip({
+																:translation_request_id		 	=> @translation_request.id, 
+																:audio_file_location 				=> '/really/made/up/file.mp3', 
+																:video_file_location 				=> 'unique/video/file.mp4',
+																:status 										=> 'COMPLETE'
+															})
+			@master_recording = OBSFactory.master_recording({:translation_request_id => @translation_request.id})
+		end
+		
+		it "Update and respond with JSON" do
+			expected_title = 'Zombie Video'
+			expected_lang = 'Dutch'
+			url = "#{ROOT_URL}master_recordings/#{@master_recording['id']}.json"
+			request = RestClient.post url, {
+				:title 											=> expected_title,
+				:language 									=> expected_lang,
+				:translation_request_token 	=> @translation_request.token,
+				'_method' 									=> 'PUT'
+			}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['status'].should eq('success')
+			response['vts']['message'].should match('has been modified')
+			response['vts']['master_recordings'][0]['title'].should eq("#{expected_title}")
+			response['vts']['master_recordings'][0]['language'].should eq("#{expected_lang}")
+		end
+		
+		it "Update and respond with XML" do
+			expected_title = 'Frankenstein Video'
+			expected_lang = 'Cantonese'
+			url = "#{ROOT_URL}master_recordings/#{@master_recording['id']}.xml"
+			request = RestClient.post url, {
+				:title 											=> expected_title,
+				:language 									=> expected_lang,
+				:translation_request_token 	=> @translation_request.token,
+				'_method' 									=> 'PUT'
+			}
+			request.code.should eq(200)
+			response = Nokogiri::XML(request)
+			response.css("vts status").first.text.should eq('success')
+			response.css("vts message").text.should match('has been modified')
+			response.css("vts master_recordings title").first.text.should eq("#{expected_title}")
+			response.css("vts master_recordings language").first.text.should eq("#{expected_lang}")
+		end
+		
+		it "404 Error (resource missing)" do
+			url = "#{ROOT_URL}master_recordings/9999999999999999999999.json"
+			begin
+				request = RestClient.post url, {
+					:title 											=> 'My Title',
+					:language 									=> 'A Lang',
+					:translation_request_token 	=> @translation_request.token,
+					'_method' 									=> 'PUT'
+				}
+				puts "    404 Error (resource missing) - errored incorrectly"
+			rescue => e
+				e.response.code.should eq(404)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should_not be_empty
+				response['vts']['status'].should match('error')
+				response['vts']['message'].should_not be_empty
+				response['vts']['message'].downcase.should match('invalid resource')
+				puts "    404 Error (resource missing) - errored correctly"
+			end
+		end
+		
+	end
+	
 	describe "must have valid Translation Request ID" do
 
 		it "should error if missing" do

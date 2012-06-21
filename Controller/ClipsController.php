@@ -78,7 +78,7 @@ class ClipsController extends AppController {
 			$this->set('status', __('success'));
 			$this->set('clip', $this->Clip->read(null, $id));
 		} else {
-			throw new BadRequestException(__('You are missing the audio file.'));
+			throw new BadRequestException(__('Unable to update your clip.'));
 		}
 	}
 
@@ -104,7 +104,7 @@ class ClipsController extends AppController {
 			$this->set('status', __('success'));
 			$this->set('clip', $this->Clip->read(null, $id));
 		} else {
-			throw new BadRequestException(__('You are missing the audio file.'));
+			throw new BadRequestException(__('Unable to update your clip.'));
 		}
 	}
 

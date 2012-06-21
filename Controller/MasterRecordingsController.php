@@ -78,18 +78,15 @@ class MasterRecordingsController extends AppController {
 	public function edit($id = null) {
 		$this->MasterRecording->id = $id;
 		if (!$this->MasterRecording->exists()) {
-			throw new NotFoundException(__('Invalid master recording'));
+			throw new NotFoundException(__('The master recording does not exist.'));
 		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->MasterRecording->save($this->request->data)) {
-				$this->flash(__('The master recording has been saved.'), array('action' => 'index'));
-			} else {
-			}
+		if ($this->MasterRecording->save($this->request->data)) {
+			$this->set('message', __('Your master recording has been modified.'));
+			$this->set('status', __('success'));
+			$this->set('master_recording', $this->MasterRecording->read(null, $id));
 		} else {
-			$this->request->data = $this->MasterRecording->read(null, $id);
+			throw new BadRequestException(__('Unable to update your master recording.'));
 		}
-		$translationRequests = $this->MasterRecording->TranslationRequest->find('list');
-		$this->set(compact('translationRequests'));
 	}
 
 /**
