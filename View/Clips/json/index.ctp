@@ -20,5 +20,5 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-echo json_encode(array('vts' => array('status' => 'success', 'message' => '', 'ready_for_processing' => $ready_for_processing, 'clips' => $clips)));
+echo json_encode(array('vts' => array('status' => __('success'), 'message' => '', 'ready_for_processing' => $ready_for_processing, 'clips' => $clips)));
 ?>

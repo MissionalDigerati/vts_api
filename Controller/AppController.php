@@ -37,7 +37,7 @@ class AppController extends Controller {
 	 *
 	 * @var array
 	 */
-	public $components = array('DebugKit.Toolbar');
+	public $components = array('DebugKit.Toolbar', 'RequestHandler');
 	/**
 	 * The current translation request id
 	 *
@@ -59,6 +59,22 @@ class AppController extends Controller {
 	 * @author Johnathan Pulos
 	 */
 	public function beforeFilter() {
+		$url = $this->request->here();
+		/**
+		 * Set up the correct response
+		 *
+		 * @author Johnathan Pulos
+		 */
+		if(isset($this->request->params['ext'])) {
+			switch ($this->request->params['ext']) {
+				case 'json':
+					$this->RequestHandler->respondAs('json');
+				break;
+				case 'xml':
+					$this->RequestHandler->respondAs('xml');
+				break;
+			}
+		}
 		/**
 		 * Make sure they are using the correct HTTP methods
 		 *
@@ -68,13 +84,13 @@ class AppController extends Controller {
 			case 'index':
 			case 'view':
 				if (!$this->request->is('get')) {
-					throw new MethodNotAllowedException();
+					throw new MethodNotAllowedException($url.__(' requires a GET HTTP Method.'));
 					exit;
 				}
 			break;
 			case 'add':
 				if (!$this->request->is('post')) {
-					throw new MethodNotAllowedException();
+					throw new MethodNotAllowedException($url.__(' requires a POST HTTP Method.'));
 					exit;
 				}
 			break;
@@ -86,7 +102,7 @@ class AppController extends Controller {
 				 * @author Johnathan Pulos
 				 */
 				if ($this->request->is('get') || $this->request->is('delete')) {
-					throw new MethodNotAllowedException();
+					throw new MethodNotAllowedException($url.__(' requires a PUT HTTP Method or a POST with a _method var set to PUT.'));
 					exit;
 				}
 			break;
@@ -98,7 +114,7 @@ class AppController extends Controller {
 				 * @author Johnathan Pulos
 				 */
 				if ($this->request->is('get') || $this->request->is('put')) {
-					throw new MethodNotAllowedException();
+					throw new MethodNotAllowedException($url.__(' requires a DELETE HTTP Method or a POST with a _method var set to DELETE.'));
 					exit;
 				}
 			break;
@@ -115,12 +131,12 @@ class AppController extends Controller {
 	public function mustHaveValidToken() {
 		$this->currentToken = $this->cleanedToken($this->getParam('translation_request_token'));
 		if(empty($this->currentToken)) {
-			throw new Exception(__('Your token is missing.'), 401);
+			throw new Exception(__('Your translation request token is missing.'), 401);
 		}
 		$this->loadModel('TranslationRequest');
 		$currentTranslationRequest = $this->TranslationRequest->findByToken($this->currentToken);
 		if (empty($currentTranslationRequest)) {
-			throw new NotFoundException(__('Invalid translation request.'));
+			throw new NotFoundException(__('Invalid translation request token submitted.'));
 		}
 		/**
 		 * I have to force Cake to use this Translation Request, if not then the isExpired function gets the wrong Translation Request
@@ -129,10 +145,10 @@ class AppController extends Controller {
 		 */
 		$this->TranslationRequest->id = $currentTranslationRequest['TranslationRequest']['id'];
 		if (!$this->TranslationRequest->exists()) {
-			throw new NotFoundException(__('Invalid translation request.'));
+			throw new NotFoundException(__('Invalid translation request token submitted.'));
 		}
 		if ($this->TranslationRequest->isExpired()) {
-			throw new Exception(__('Your token has expired.'), 401);
+			throw new Exception(__('Your translation request token has expired.'), 401);
 		}
 		$this->currentTranslationRequestId = $currentTranslationRequest['TranslationRequest']['id'];
 	}

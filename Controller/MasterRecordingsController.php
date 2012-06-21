@@ -9,13 +9,6 @@ App::uses('AppController', 'Controller');
 class MasterRecordingsController extends AppController {
 
 /**
- * Components
- *
- * @var array
- */
-	public $components = array('RequestHandler');
-
-/**
  * Call the CakePHP callback beforeFilter
  *
  * @return void

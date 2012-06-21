@@ -20,5 +20,5 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-echo json_encode(array('vts' => array('status' => 'error', 'message' => 'Invalid resource id provided.')));
+echo json_encode(array('vts' => array('status' => __('error'), 'message' => __('Invalid resource id provided.'), 'details' => $details)));
 ?>

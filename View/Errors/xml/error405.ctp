@@ -20,7 +20,7 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-$data = array('vts' => array('status' => 'error', 'message' => 'Invalid http method provided.'));
+$data = array('vts' => array('status' => __('error'), 'message' => __('Invalid http method provided.'), 'details' => $details));
 $xml = Xml::build($data);
 ?>
 <?php echo $xml->saveXML();?>

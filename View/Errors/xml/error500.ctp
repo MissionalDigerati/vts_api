@@ -20,7 +20,7 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-$data = array('vts' => array('status' => 'error', 'message' => 'Sorry,  we have experienced a internal server error.'));
+$data = array('vts' => array('status' => __('error'), 'message' => __('Sorry,  we have experienced a internal server error.'), 'details' => $details));
 $xml = Xml::build($data);
 ?>
 <?php echo $xml->saveXML();?>

@@ -20,7 +20,7 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-$data = array('vts' => array('status' => 'error', 'message' => 'You are missing required attributes, or have a malformed request.'));
+$data = array('vts' => array('status' => __('error'), 'message' => __('You are missing required attributes, or have a malformed request.'), 'details' => $details));
 $xml = Xml::build($data);
 ?>
 <?php echo $xml->saveXML();?>

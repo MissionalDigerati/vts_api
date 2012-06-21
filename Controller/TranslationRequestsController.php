@@ -30,13 +30,6 @@ App::uses('AppController', 'Controller');
 class TranslationRequestsController extends AppController {
 
 /**
- * Define components you wish to use on all controllers
- *
- * @var array
- */
-	public $components = array('RequestHandler');
-
-/**
  * index method
  * /translation_requests.format
  *
@@ -57,10 +50,10 @@ class TranslationRequestsController extends AppController {
 	public function view($id = null) {
 		$this->TranslationRequest->id = $id;
 		if (!$this->TranslationRequest->exists()) {
-			throw new NotFoundException(__('Invalid translation request.'));
+			throw new NotFoundException(__('The translation request does not exist.'));
 		}
 		if ($this->TranslationRequest->isExpired()) {
-			throw new Exception(__('Your token has expired.'), 401);
+			throw new Exception(__('Your translation request token has expired.'), 401);
 		}
 		$this->set('translation_request', $this->TranslationRequest->read(null, $id));
 	}
@@ -79,7 +72,7 @@ class TranslationRequestsController extends AppController {
 			$this->set('status', __('success'));
 			$this->set('translation_request', $this->TranslationRequest->read(null, $id));
 		} else {
-			throw new BadRequestException(__('Malformed request.'));
+			throw new BadRequestException(__('There was a problem with your request.'));
 		}
 	}
 
@@ -93,7 +86,7 @@ class TranslationRequestsController extends AppController {
 	public function delete($id = null) {
 		$this->TranslationRequest->id = $id;
 		if (!$this->TranslationRequest->exists()) {
-			throw new NotFoundException(__('Invalid translation request.'));
+			throw new NotFoundException(__('The translation request does not exist.'));
 		}
 		if ($this->TranslationRequest->isExpired()) {
 			throw new Exception(__('Your token has expired.'), 401);
@@ -102,7 +95,7 @@ class TranslationRequestsController extends AppController {
 			$this->set('message', __('Your translation request has been deleted.'));
 			$this->set('status', __('success'));
 		}else {
-			throw new BadRequestException(__('Malformed request.'));
+			throw new BadRequestException(__('There was a problem with your request.'));
 		}
 	}
 

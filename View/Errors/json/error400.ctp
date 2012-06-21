@@ -20,5 +20,5 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-echo json_encode(array('vts' => array('status' => 'error', 'message' => 'You are missing required attributes, or have a malformed request.')));
+echo json_encode(array('vts' => array('status' => __('error'), 'message' => __('You are missing required attributes, or have a malformed request.'), 'details' => $details)));
 ?>

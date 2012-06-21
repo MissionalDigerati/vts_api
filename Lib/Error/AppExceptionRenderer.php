@@ -39,8 +39,9 @@ class AppExceptionRenderer extends ExceptionRenderer {
 	public function error400($error) {
 		$ext = $this->controller->request['ext'];
 		$statusCode = $error->getCode();
+		$this->controller->set('details', $error->getMessage());
 		$this->controller->response->statusCode($statusCode);
-		$this->controller->render('/Errors/'.$ext.'/error'.$statusCode);
+		$this->controller->render('/Errors/'.$ext.'/error'.$statusCode, $ext.'/default');
 		$this->controller->response->send();
 	}
 	
@@ -55,6 +56,7 @@ class AppExceptionRenderer extends ExceptionRenderer {
 	public function error500($error) {
 		$ext = $this->controller->request['ext'];
 		$statusCode = $error->getCode();
+		$this->controller->set('details', $error->getMessage());
 		$this->controller->response->statusCode($statusCode);
 		$this->controller->render('/Errors/'.$ext.'/error'.$statusCode);
 		$this->controller->response->send();
