@@ -6,17 +6,17 @@ App::uses('AppModel', 'Model');
  * @property TranslationRequest $TranslationRequest
  */
 class MasterRecording extends AppModel {
-/**
- * Display field
- *
- * @var string
- */
+	/**
+	 * Display field
+	 *
+	 * @var string
+	 */
 	public $displayField = 'title';
-/**
- * Validation rules
- *
- * @var array
- */
+	/**
+	 * Validation rules
+	 *
+	 * @var array
+	 */
 	public $validate = array(
 		'title' => array(
 			'notempty' => array(
@@ -32,24 +32,25 @@ class MasterRecording extends AppModel {
 		),
 	);
 
-/**
- * belongsTo associations
- *
- * @var array
- */
+	/**
+	 * belongsTo associations
+	 *
+	 * @var array
+	 */
 	public $belongsTo = array(
 		'TranslationRequest' => array(
 			'className' => 'TranslationRequest',
 			'foreignKey' => 'translation_request_id'
 		)
 	);
-/**
- * Generates a valid response if there are errors on the validation of model
- *
- * @return string
- * @access public
- * @author Johnathan Pulos
- */
+	
+	/**
+	 * Generates a valid response if there are errors on the validation of model
+	 *
+	 * @return string
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
 	public function getValidationErrorResponse() {
 		if(empty($this->validationErrors)) {
 			return __('Unable to save your master recording.');
@@ -63,4 +64,29 @@ class MasterRecording extends AppModel {
 			return trim($response);
 		}
 	}
+	
+	/**
+	 * Call the CakePHP beforeSave callback
+	 *
+	 * @return boolean
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+		public function beforeSave() {
+			if (!$this->id && !isset($this->data[$this->alias][$this->primaryKey])) {
+				/**
+				 * Put in any functionality for the add method
+				 *
+				 * @author Johnathan Pulos
+				 */
+			} else{
+				/**
+				 * Put in any functionality for the edit method
+				 *
+				 * @author Johnathan Pulos
+				 */
+			}
+			$this->data[$this->alias]['status'] = 'PENDING';
+			return true;
+		}
 }

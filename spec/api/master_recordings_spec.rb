@@ -238,6 +238,21 @@ describe "API::MasterRecordings" do
 			end
 		end
 		
+		it "should set status to pending if modified" do
+			master_recording = OBSFactory.master_recording({:translation_request_id => @translation_request.id, :status => 'COMPLETE'})
+			url = "#{ROOT_URL}master_recordings/#{master_recording.id}.json"
+			request = RestClient.post url, {
+				:title 											=> 'My Title',
+				:language 									=> 'A Lang',
+				:translation_request_token 	=> @translation_request.token,
+				'_method' 									=> 'PUT'
+			}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['master_recordings'][0]['status'].should_not be_nil
+			response['vts']['master_recordings'][0]['status'].downcase.should eq('pending')
+		end
+		
 	end
 	
 	describe "DELETE /master_recordings/id" do
