@@ -22,6 +22,7 @@
  */
 Router::mapResources('translation_requests');
 Router::mapResources('clips');
+Router::mapResources('master_recordings');
 /**
  * Here, we are connecting '/' (base path) to controller called 'Pages',
  * its action called 'display', and we pass a param to select the view file

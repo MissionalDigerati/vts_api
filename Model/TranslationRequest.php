@@ -38,6 +38,10 @@ class TranslationRequest extends AppModel {
 		'Clip' => array(
 			'className' => 'Clip',
 			'dependent'    => true
+		),
+		'MasterRecording' => array(
+			'className' => 'MasterRecording',
+			'dependent'    => true
 		)
 	);
 			
