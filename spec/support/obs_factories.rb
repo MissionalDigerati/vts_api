@@ -18,6 +18,12 @@ class OBSFactories
 		TranslationRequest.create!(attributes)
 	end
 	
+	# check if the translation_request exists
+	#
+	def translation_request_exists?(id)
+		TranslationRequest.exists?(id)
+	end
+	
 	# create a clip
 	#
 	def clip(options = {})
@@ -27,6 +33,12 @@ class OBSFactories
 		Clip.create!(attributes)
 	end
 	
+	# check if the clip exists
+	#
+	def clip_exists?(id)
+		Clip.exists?(id)
+	end
+	
 	# create a master recording
 	#
 	def master_recording(options = {})
@@ -34,6 +46,12 @@ class OBSFactories
 		attributes = {:translation_request_id => translation_request.id, :title => 'My Master Recording', :language => 'German', :status => 'PENDING', :modified => Date.today, :created => Date.today}
 		attributes.merge!(options)
 		MasterRecording.create!(attributes)
+	end
+	
+	# check if the master recording exists
+	#
+	def master_recording_exists?(id)
+		MasterRecording.exists?(id)
 	end
 	
 	private

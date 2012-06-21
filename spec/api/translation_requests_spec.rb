@@ -133,6 +133,7 @@ describe "API::TranslationRequests" do
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been deleted')
 			response['vts']['translation_requests'].should be_empty
+			OBSFactory.translation_request_exists?(@translation_request.id).should be_false
 		end
 	
 		it "Delete and respond with XML" do
@@ -144,6 +145,23 @@ describe "API::TranslationRequests" do
 			response.css("vts message").text.should match('has been deleted')
 			translation_requests = response.css("vts translation_requests")
 			translation_requests.children.length.should eq(0)
+			OBSFactory.translation_request_exists?(@translation_request.id).should be_false
+		end
+		
+		it "404 Error (resource missing)" do
+			url = "#{ROOT_URL}translation_requests/9999999999999999999999.json"
+			begin
+				request = RestClient.post url, '_method' => 'DELETE'
+				puts "    404 Error (resource missing) - errored incorrectly"
+			rescue => e
+				e.response.code.should eq(404)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should_not be_empty
+				response['vts']['status'].should match('error')
+				response['vts']['message'].should_not be_empty
+				response['vts']['message'].downcase.should match('invalid resource')
+				puts "    404 Error (resource missing) - errored correctly"
+			end
 		end
 	end
 	

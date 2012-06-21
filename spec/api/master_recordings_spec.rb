@@ -261,6 +261,7 @@ describe "API::MasterRecordings" do
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been deleted')
 			response['vts']['master_recordings'].should be_empty
+			OBSFactory.master_recording_exists?(@master_recording.id).should be_false
 		end
 		
 		it "Delete and respond with XML" do
@@ -271,6 +272,7 @@ describe "API::MasterRecordings" do
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been deleted')
 			response.css("vts master_recordings").children.length.should eq(0)
+			OBSFactory.master_recording_exists?(@master_recording.id).should be_false
 		end
 		
 		it "404 Error (resource missing)" do

@@ -358,6 +358,7 @@ describe "API::Clips" do
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been deleted')
 			response['vts']['clips'].should be_empty
+			OBSFactory.clip_exists?(@clip.id).should be_false
 		end
 		
 		it "Delete and respond with XML" do
@@ -368,8 +369,24 @@ describe "API::Clips" do
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been deleted')
 			response.css("vts clips").children.length.should eq(0)
+			OBSFactory.clip_exists?(@clip.id).should be_false
 		end
 		
+		it "404 Error (resource missing)" do
+			url = "#{ROOT_URL}clips/9999999999999999999999.json"
+			begin
+				request = RestClient.post url, {:translation_request_token => @translation_request.token, '_method' => 'DELETE'}
+				puts "    404 Error (resource missing) - errored incorrectly"
+			rescue => e
+				e.response.code.should eq(404)
+				response = JSON.parse(e.response)
+				response['vts']['status'].should_not be_empty
+				response['vts']['status'].should match('error')
+				response['vts']['message'].should_not be_empty
+				response['vts']['message'].downcase.should match('invalid resource')
+				puts "    404 Error (resource missing) - errored correctly"
+			end
+		end
 	end
 	
 	describe "must have valid Translation Request ID" do
