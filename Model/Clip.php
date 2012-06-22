@@ -6,12 +6,19 @@ App::uses('AppModel', 'Model');
  * @property TranslationRequest $TranslationRequest
  */
 class Clip extends AppModel {
+	
+	/**
+	 * Accessible attributes for mass assignment
+	 *
+	 * @var array
+	 */
+	public $attrAccessible = array('video_file_location', 'audio_file_location', 'audio_file');
 
-/**
- * belongsTo associations
- *
- * @var array
- */
+	/**
+	 * belongsTo associations
+	 *
+	 * @var array
+	 */
 	public $belongsTo = array(
 		'TranslationRequest' => array(
 			'className' => 'TranslationRequest',
@@ -19,12 +26,12 @@ class Clip extends AppModel {
 		)
 	);
 
-/**
- * Setup the CakePHP behaviors for this model.  It uses the Uploader Plugin
- * 
- * @link http://milesj.me/code/cakephp/uploader
- * @var string
- */	
+	/**
+	 * Setup the CakePHP behaviors for this model.  It uses the Uploader Plugin
+	 * 
+	 * @link http://milesj.me/code/cakephp/uploader
+	 * @var string
+	 */	
 	public $actsAs = array( 
 		'Uploader.FileValidation' => array(
 				'audio_file' => array(
@@ -61,29 +68,17 @@ class Clip extends AppModel {
 	);
 	
 	/**
-	 * Call the CakePHP beforeSave callback
+	 * Call the CakePHP afterSave callback
 	 *
 	 * @return boolean
 	 * @access public
 	 * @author Johnathan Pulos
 	 */
-		public function beforeSave() {
-			if (!$this->id && !isset($this->data[$this->alias][$this->primaryKey])) {
-				/**
-				 * Put in any functionality for the add method
-				 *
-				 * @author Johnathan Pulos
-				 */
-			} else{
-				/**
-				 * Put in any functionality for the edit method
-				 *
-				 * @author Johnathan Pulos
-				 */
-			}
-			$this->data[$this->alias]['status'] = 'PENDING';
+		public function afterSave() {
+			$this->query('UPDATE clips SET status = "PENDING" WHERE id = '.$this->id);
 			return true;
 		}
+		
 	/**
 	 * Iterates over all clips for a specific translation request, and verifies it is ready for a master recording
 	 *

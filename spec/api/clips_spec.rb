@@ -47,6 +47,7 @@ describe "API::Clips" do
 			response['vts']['message'].should match('has been submitted')
 			response['vts']['clips'][0]['status'].should_not be_nil
 			response['vts']['clips'][0]['status'].downcase.should eq('pending')
+			response['vts']['clips'][0]['id'].should_not be_nil
 			response['vts']['clips'][0]['audio_file_location'].should_not be_nil
 			response['vts']['clips'][0]['audio_file_location'].should_not be_empty
 			response['vts']['clips'][0]['video_file_location'].should_not be_nil
@@ -69,6 +70,7 @@ describe "API::Clips" do
 			status = response.css("vts clips status").first.text
 			status.should_not be_nil
 			status.downcase.should eq('pending')
+			audio_file_url = response.css("vts clips id").text.should_not be_nil
 			audio_file_url = response.css("vts clips audio_file_location").text
 			audio_file_url.should_not be_nil
 			audio_file_url.should_not be_empty
@@ -77,6 +79,23 @@ describe "API::Clips" do
 			video_file_url.should_not be_empty
 			@expected_file = File.join(WEBROOT_DIRECTORY, audio_file_url)
 			File.exists?(@expected_file).should be_true
+		end
+		
+		it "should not let you add the translation_request_id" do
+			new_translation_request_id = '383838383'
+			url = "#{ROOT_URL}clips.json"
+			request = RestClient.post url,{ 
+				:translation_request_id => new_translation_request_id, 
+				:translation_request_token => @translation_request.token, 
+				:video_file_location => '1/the_compassionate_father_1.mp4',
+				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
+				:multipart => true
+			}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['clips'][0]['id'].should_not be_nil
+			response['vts']['clips'][0]['translation_request_id'].should eq("#{@translation_request.id}")
+			response['vts']['clips'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
 		end
 		
 		it "requires an audio file" do
@@ -195,6 +214,23 @@ describe "API::Clips" do
 			response = JSON.parse(request)
 			response['vts']['clips'][0]['status'].should_not be_nil
 			response['vts']['clips'][0]['status'].downcase.should eq('pending')
+		end
+		
+		it "should not let you change the translation_request_id" do
+			new_translation_request_id = '45637261188'
+			url = "#{ROOT_URL}clips/#{@clip.id}.json"
+			request = RestClient.post url,{ 
+				:translation_request_token => @translation_request.token, 
+				:translation_request_id => new_translation_request_id,
+				:video_file_location => '',
+				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:multipart => true,
+				'_method' => 'PUT'
+			}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['clips'][0]['translation_request_id'].should eq("#{@translation_request.id}")
+			response['vts']['clips'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
 		end
 		
 	end
