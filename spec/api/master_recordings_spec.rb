@@ -253,6 +253,22 @@ describe "API::MasterRecordings" do
 			response['vts']['master_recordings'][0]['status'].downcase.should eq('pending')
 		end
 		
+		it "should not let you change the translation_request_id" do
+			new_translation_request_id = '98889990099998222'
+			url = "#{ROOT_URL}master_recordings/#{@master_recording['id']}.json"
+			request = RestClient.post url, {
+				:title 											=> 'Zombie Video',
+				:language 									=> 'Dutch',
+				:translation_request_token 	=> @translation_request.token,
+				:translation_request_id 	=> new_translation_request_id,
+				'_method' 									=> 'PUT'
+			}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['master_recordings'][0]['translation_request_id'].should eq("#{@translation_request.id}")
+			response['vts']['master_recordings'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
+		end
+		
 	end
 	
 	describe "DELETE /master_recordings/id" do

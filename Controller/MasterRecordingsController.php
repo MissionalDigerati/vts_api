@@ -80,7 +80,7 @@ class MasterRecordingsController extends AppController {
 		if (!$this->MasterRecording->exists()) {
 			throw new NotFoundException(__('The master recording does not exist.'));
 		}
-		if ($this->MasterRecording->save($this->request->data)) {
+		if ($this->MasterRecording->save($this->request->data, true, $this->MasterRecording->attrAccessible)) {
 			$this->set('message', __('Your master recording has been modified.'));
 			$this->set('status', __('success'));
 			$this->set('master_recording', $this->MasterRecording->read(null, $id));

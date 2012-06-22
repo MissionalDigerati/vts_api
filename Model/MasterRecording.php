@@ -13,6 +13,12 @@ class MasterRecording extends AppModel {
 	 */
 	public $displayField = 'title';
 	/**
+	 * Accessible attributes for mass assignment
+	 *
+	 * @var array
+	 */
+	public $attrAccessible = array('title', 'language');
+	/**
 	 * Validation rules
 	 *
 	 * @var array
@@ -66,27 +72,14 @@ class MasterRecording extends AppModel {
 	}
 	
 	/**
-	 * Call the CakePHP beforeSave callback
+	 * Call the CakePHP afterSave callback
 	 *
 	 * @return boolean
 	 * @access public
 	 * @author Johnathan Pulos
 	 */
-		public function beforeSave() {
-			if (!$this->id && !isset($this->data[$this->alias][$this->primaryKey])) {
-				/**
-				 * Put in any functionality for the add method
-				 *
-				 * @author Johnathan Pulos
-				 */
-			} else{
-				/**
-				 * Put in any functionality for the edit method
-				 *
-				 * @author Johnathan Pulos
-				 */
-			}
-			$this->data[$this->alias]['status'] = 'PENDING';
+		public function afterSave() {
+			$this->query('UPDATE master_recordings SET status = "PENDING" WHERE id = '.$this->id);
 			return true;
 		}
 }
