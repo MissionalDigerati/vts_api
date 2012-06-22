@@ -1,0 +1,3 @@
+[submodule "Vendor/render_engine"]
+	path = Vendor/render_engine
+	url = git@github.com:MissionalDigerati/open_bible_stories_rendering_engine.git
