@@ -17,7 +17,7 @@ class MasterRecording extends AppModel {
 	 *
 	 * @var array
 	 */
-	public $attrAccessible = array('title', 'language');
+	public $attrAccessible = array('title', 'language', 'final_filename');
 	/**
 	 * Validation rules
 	 *
@@ -34,6 +34,12 @@ class MasterRecording extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Please supply a valid language for your master recording.'
+			),
+		),
+		'final_filename' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				'message' => 'Please supply a valid final filename for your master recording.'
 			),
 		),
 	);

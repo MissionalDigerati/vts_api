@@ -36,9 +36,10 @@ describe "API::MasterRecordings" do
 		it "Create and respond with JSON" do
 			url = "#{ROOT_URL}master_recordings.json"
 			request = RestClient.post url, 
-				:translation_request_token => @translation_request.token, 
-				:title => 'The Compassionate Father',
-				:language => 'Greek'
+				:translation_request_token 	=> @translation_request.token, 
+				:title 					  					=> 'The Compassionate Father',
+				:language 			  					=> 'Greek',                   
+				:final_filename   					=> 'gr_compassionate_father'  
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
@@ -48,14 +49,16 @@ describe "API::MasterRecordings" do
 			response['vts']['master_recordings'][0]['translation_request_id'].should_not be_nil
 			response['vts']['master_recordings'][0]['title'].should eq('The Compassionate Father')
 			response['vts']['master_recordings'][0]['language'].should eq('Greek')
+			response['vts']['master_recordings'][0]['final_filename'].should eq('gr_compassionate_father')
 		end
 		
 		it "Create and respond with XML" do
 			url = "#{ROOT_URL}master_recordings.xml"
 			request = RestClient.post url, 
-				:translation_request_token => @translation_request.token, 
-				:title => 'The Feeding of 500',
-				:language => 'Spanish'
+				:translation_request_token 	=> @translation_request.token, 
+				:title 											=> 'The Feeding of 500',
+				:language 									=> 'Spanish',
+				:final_filename 						=> 'sp_feeding_500'
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
@@ -66,16 +69,18 @@ describe "API::MasterRecordings" do
 			response.css("vts master_recordings translation_request_id").text.should_not be_nil
 			response.css("vts master_recordings title").text.should eq('The Feeding of 500')
 			response.css("vts master_recordings language").text.should eq('Spanish')
+			response.css("vts master_recordings final_filename").text.should eq('sp_feeding_500')
 		end
 		
 		it "should not let you add the translation_request_id" do
 			new_translation_request_id = '383838383'
 			url = "#{ROOT_URL}master_recordings.json"
 			request = RestClient.post url,{ 
-					:title => 'The Feeding of 500',
-					:language => 'Spanish',
-					:translation_request_id => new_translation_request_id,
-					:translation_request_token => @translation_request.token
+					:title 											=> 'The Feeding of 500',
+					:language 									=> 'Spanish',
+					:translation_request_id 		=> new_translation_request_id,
+					:translation_request_token 	=> @translation_request.token,
+					:final_filename 						=> 'sp_feeding_500'
 				}
 			request.code.should eq(200)
 			response = JSON.parse(request)
@@ -89,9 +94,10 @@ describe "API::MasterRecordings" do
 				url = "#{ROOT_URL}master_recordings.json"
 				begin
 					request = RestClient.post url, 
-						:translation_request_token => @translation_request.token, 
-						:title => '',
-						:language => 'Greek'
+						:translation_request_token 	=> @translation_request.token, 
+						:title 											=> '',
+						:language 									=> 'Greek',
+						:final_filename 						=> 'gr_feeding_500'
 					puts "      Requires a title - errored incorrectly"
 				rescue => e
 					e.response.code.should eq(400)
@@ -109,9 +115,10 @@ describe "API::MasterRecordings" do
 				url = "#{ROOT_URL}master_recordings.json"
 				begin
 					request = RestClient.post url, 
-						:translation_request_token => @translation_request.token, 
-						:title => 'My great master recording',
-						:language => ''
+						:translation_request_token 	=> @translation_request.token, 
+						:title 											=> 'My great master recording',
+						:language 									=> '',
+						:final_filename 						=> 'sp_feeding_500'
 					puts "      Requires a language - errored incorrectly"
 				rescue => e
 					e.response.code.should eq(400)
@@ -122,6 +129,27 @@ describe "API::MasterRecordings" do
 					response['vts']['message'].downcase.should match('missing required attributes')
 					response['vts']['details'].downcase.should match('supply a valid language')
 					puts "      Requires a language - errored correctly"
+				end
+			end
+			
+			it "Requires a final_filename" do
+				url = "#{ROOT_URL}master_recordings.json"
+				begin
+					request = RestClient.post url, 
+						:translation_request_token 	=> @translation_request.token, 
+						:title 											=> 'My great master recording',
+						:language 									=> 'greek',
+						:final_filename 						=> ''
+					puts "      Requires a final_filename - errored incorrectly"
+				rescue => e
+					e.response.code.should eq(400)
+					response = JSON.parse(e.response)
+					response['vts']['status'].should_not be_empty
+					response['vts']['status'].should match('error')
+					response['vts']['message'].should_not be_empty
+					response['vts']['message'].downcase.should match('missing required attributes')
+					response['vts']['details'].downcase.should match('supply a valid final filename')
+					puts "      Requires a final_filename - errored correctly"
 				end
 			end
 			
@@ -153,6 +181,7 @@ describe "API::MasterRecordings" do
 			response['vts']['master_recordings'][0]['title'].should eq("#{@master_recording['title']}")
 			response['vts']['master_recordings'][0]['language'].should eq("#{@master_recording['language']}")
 			response['vts']['master_recordings'][0]['status'].should eq("#{@master_recording['status']}")
+			response['vts']['master_recordings'][0]['final_filename'].should eq("#{@master_recording['final_filename']}")
 		end
 		
 		it "Read and respond with XML" do
@@ -165,6 +194,7 @@ describe "API::MasterRecordings" do
 			response.css("vts master_recordings title").first.text.should eq("#{@master_recording['title']}")
 			response.css("vts master_recordings language").first.text.should eq("#{@master_recording['language']}")
 			response.css("vts master_recordings status").first.text.should eq("#{@master_recording['status']}")
+			response.css("vts master_recordings final_filename").first.text.should eq("#{@master_recording['final_filename']}")
 		end
 		
 		it "404 Error (resource missing)" do
@@ -201,12 +231,14 @@ describe "API::MasterRecordings" do
 		it "Update and respond with JSON" do
 			expected_title = 'Zombie Video'
 			expected_lang = 'Dutch'
+			expected_final_filename = 'dc_zombie_vid'
 			url = "#{ROOT_URL}master_recordings/#{@master_recording['id']}.json"
 			request = RestClient.post url, {
 				:title 											=> expected_title,
 				:language 									=> expected_lang,
 				:translation_request_token 	=> @translation_request.token,
-				'_method' 									=> 'PUT'
+				'_method' 									=> 'PUT',
+				:final_filename 						=> expected_final_filename
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
@@ -214,17 +246,20 @@ describe "API::MasterRecordings" do
 			response['vts']['message'].should match('has been modified')
 			response['vts']['master_recordings'][0]['title'].should eq("#{expected_title}")
 			response['vts']['master_recordings'][0]['language'].should eq("#{expected_lang}")
+			response['vts']['master_recordings'][0]['final_filename'].should eq("#{expected_final_filename}")
 		end
 		
 		it "Update and respond with XML" do
 			expected_title = 'Frankenstein Video'
 			expected_lang = 'Cantonese'
+			expected_final_filename = 'ct_frankie_vid'
 			url = "#{ROOT_URL}master_recordings/#{@master_recording['id']}.xml"
 			request = RestClient.post url, {
 				:title 											=> expected_title,
 				:language 									=> expected_lang,
 				:translation_request_token 	=> @translation_request.token,
-				'_method' 									=> 'PUT'
+				'_method' 									=> 'PUT',
+				:final_filename 						=> expected_final_filename
 			}
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
@@ -232,6 +267,7 @@ describe "API::MasterRecordings" do
 			response.css("vts message").text.should match('has been modified')
 			response.css("vts master_recordings title").first.text.should eq("#{expected_title}")
 			response.css("vts master_recordings language").first.text.should eq("#{expected_lang}")
+			response.css("vts master_recordings final_filename").first.text.should eq("#{expected_final_filename}")
 		end
 		
 		it "404 Error (resource missing)" do
@@ -241,7 +277,8 @@ describe "API::MasterRecordings" do
 					:title 											=> 'My Title',
 					:language 									=> 'A Lang',
 					:translation_request_token 	=> @translation_request.token,
-					'_method' 									=> 'PUT'
+					'_method' 									=> 'PUT',
+					:final_filename 						=> 'sp_feeding_500'
 				}
 				puts "    404 Error (resource missing) - errored incorrectly"
 			rescue => e
@@ -262,7 +299,8 @@ describe "API::MasterRecordings" do
 				:title 											=> 'My Title',
 				:language 									=> 'A Lang',
 				:translation_request_token 	=> @translation_request.token,
-				'_method' 									=> 'PUT'
+				'_method' 									=> 'PUT',
+				:final_filename 						=> 'sp_feeding_500'
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
@@ -278,7 +316,8 @@ describe "API::MasterRecordings" do
 				:language 									=> 'Dutch',
 				:translation_request_token 	=> @translation_request.token,
 				:translation_request_id 	=> new_translation_request_id,
-				'_method' 									=> 'PUT'
+				'_method' 									=> 'PUT',
+				:final_filename 						=> 'sp_feeding_500'
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
@@ -326,12 +365,7 @@ describe "API::MasterRecordings" do
 		it "404 Error (resource missing)" do
 			url = "#{ROOT_URL}master_recordings/9999999999999999999999.json"
 			begin
-				request = RestClient.post url, {
-					:title 											=> 'My Title',
-					:language 									=> 'A Lang',
-					:translation_request_token 	=> @translation_request.token,
-					'_method' 									=> 'DELETE'
-				}
+				request = RestClient.post url, {:translation_request_token => @translation_request.token, '_method' => 'DELETE'}
 				puts "    404 Error (resource missing) - errored incorrectly"
 			rescue => e
 				e.response.code.should eq(404)
@@ -351,9 +385,10 @@ describe "API::MasterRecordings" do
 			url = "#{ROOT_URL}master_recordings.json"
 			begin
 			  request = RestClient.post url, 
-					:translation_request_token => '', 
-					:title => 'The Compassionate Father',
-					:language => 'Greek'
+					:translation_request_token 	=> '', 
+					:title 											=> 'The Compassionate Father',
+					:language 									=> 'Greek',
+					:final_filename 						=> 'sp_feeding_500'
 				puts "    should error if missing - errored incorrectly"
 			rescue => e
 				e.response.code.should eq(401)
@@ -369,9 +404,10 @@ describe "API::MasterRecordings" do
 			url = "#{ROOT_URL}master_recordings.json"
 			begin
 			  request = RestClient.post url, 
-					:translation_request_token => translation_request.token, 
-					:title => 'The Compassionate Father',
-					:language => 'Greek'
+					:translation_request_token 	=> translation_request.token, 
+					:title 											=> 'The Compassionate Father',
+					:language 									=> 'Greek',
+					:final_filename 						=> 'sp_feeding_500'
 				puts "    should error if expired - errored incorrectly"
 			rescue => e
 				e.response.code.should eq(401)
@@ -386,9 +422,10 @@ describe "API::MasterRecordings" do
 			url = "#{ROOT_URL}master_recordings.json"
 			begin
 				request = RestClient.post url, 
-					:translation_request_token => 'whyohwhy', 
-					:title => 'The Compassionate Father',
-					:language => 'Greek'
+					:translation_request_token 	=> 'whyohwhy', 
+					:title 											=> 'The Compassionate Father',
+					:language 									=> 'Greek',
+					:final_filename 						=> 'sp_feeding_500'
 				puts "    should error if it does not exist - errored incorrectly"
 			rescue => e
 				e.response.code.should eq(404)
@@ -411,9 +448,10 @@ describe "API::MasterRecordings" do
 			begin
 				url = "#{ROOT_URL}master_recordings.json"
 				request = RestClient.post url, 
-					:translation_request_token => @translation_request.token, 
-					:title => 'The Compassionate Man',
-					:language => 'Portugese'
+					:translation_request_token 	=> @translation_request.token, 
+					:title 											=> 'The Compassionate Man',
+					:language 									=> 'Portugese',
+					:final_filename 						=> 'sp_feeding_500'
 				puts request
 				puts "    requires at least 1 completed clip - errored incorrectly"	
 			rescue => e
@@ -436,9 +474,10 @@ describe "API::MasterRecordings" do
 			begin
 				url = "#{ROOT_URL}master_recordings.json"
 				request = RestClient.post url, 
-					:translation_request_token => @translation_request.token, 
-					:title => 'The Compassionate Man',
-					:language => 'Portugese'
+					:translation_request_token 	=> @translation_request.token, 
+					:title 											=> 'The Compassionate Man',
+					:language 									=> 'Portugese',
+					:final_filename 						=> 'sp_feeding_500'
 				puts request
 				puts "    requires all clips to be completed - errored incorrectly"	
 			rescue => e

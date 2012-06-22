@@ -43,7 +43,7 @@ class OBSFactories
 	#
 	def master_recording(options = {})
 		translation_request = self.translation_request
-		attributes = {:translation_request_id => translation_request.id, :title => 'My Master Recording', :language => 'German', :status => 'PENDING', :modified => Date.today, :created => Date.today}
+		attributes = {:translation_request_id => translation_request.id, :title => 'My Master Recording', :language => 'German', :final_filename => 'my_file_name', :status => 'PENDING', :modified => Date.today, :created => Date.today}
 		attributes.merge!(options)
 		MasterRecording.create!(attributes)
 	end
