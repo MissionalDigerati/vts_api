@@ -28,12 +28,18 @@ App::uses('AppModel', 'Model');
  */
 class TranslationRequest extends AppModel {
 
+	/**
+	 * Accessible attributes for mass assignment
+	 *
+	 * @var array
+	 */
+	public $attrAccessible = array();
 
-/**
- * hasMany associations
- *
- * @var array
- */
+	/**
+	 * hasMany associations
+	 *
+	 * @var array
+	 */
 	public $hasMany = array(
 		'Clip' => array(
 			'className' => 'Clip',
@@ -45,13 +51,13 @@ class TranslationRequest extends AppModel {
 		)
 	);
 			
-/**
- * Check if the translation request token has expired
- *
- * @return boolean
- * @access public
- * @author Johnathan Pulos
- */
+	/**
+	 * Check if the translation request token has expired
+	 *
+	 * @return boolean
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
 	public function isExpired() {
 		if(time() > strtotime($this->field('expires_at'))) {
 			return true;
@@ -59,20 +65,19 @@ class TranslationRequest extends AppModel {
 			return false;
 		}
 	}
-		
-/**
- * Call the CakePHP beforeSave callback
- *
- * @return boolean
- * @access public
- * @author Johnathan Pulos
- */
-	public function beforeSave() {
-		if (!$this->id && !isset($this->data[$this->alias][$this->primaryKey])) {
-			$this->data[$this->alias]['token'] = "tr" . $this->createToken(25);
+	
+	/**
+	 * Call the CakePHP afterSave callback
+	 *
+	 * @return boolean
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+		public function afterSave() {
+			$token = "tr" . $this->createToken(25);
 			$tomorrow = mktime(date("G"),date("i"),date("s"),date("m"),date("d")+1,date("Y"));
-			$this->data[$this->alias]['expires_at'] = date('Y-m-d G:i:s', $tomorrow);
+			$expires_at = date('Y-m-d G:i:s', $tomorrow);
+			$this->query('UPDATE translation_requests SET token = "' . $token . '", expires_at = "' . $expires_at . '" WHERE id = '.$this->id);
+			return true;
 		}
-		return true;
-	}
 }

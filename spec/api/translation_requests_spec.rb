@@ -117,6 +117,15 @@ describe "API::TranslationRequests" do
 			expires.should_not be_nil
 			expires.should_not be_empty
 		end
+		
+		it "should not let you add the token" do
+			new_token = 'ASOP43312yuoQ'
+			url = "#{ROOT_URL}translation_requests.json"
+			request = RestClient.post url, {:token => new_token}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['translation_requests'][0]['token'].should_not eq("#{new_token}")
+		end
 	end
 	
 	describe "DELETE /translation_requests/id" do

@@ -66,7 +66,7 @@ class TranslationRequestsController extends AppController {
  */
 	public function add() {
 		$this->TranslationRequest->create();
-		if ($this->TranslationRequest->save($this->request->data)) {
+		if ($this->TranslationRequest->save($this->request->data, true, $this->TranslationRequest->attrAccessible)) {
 			$id = $this->TranslationRequest->getLastInsertID();
 			$this->set('message', __('Your translation request has been created.'));
 			$this->set('status', __('success'));
