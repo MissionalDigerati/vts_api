@@ -47,7 +47,7 @@ describe "API::Clips" do
 			response['vts']['message'].should match('has been submitted')
 			response['vts']['clips'][0]['status'].should_not be_nil
 			response['vts']['clips'][0]['status'].downcase.should eq('pending')
-			response['vts']['clips'][0]['id'].should_not be_nil
+			response['vts']['clips'][0]['translation_request_id'].should_not be_nil
 			response['vts']['clips'][0]['audio_file_location'].should_not be_nil
 			response['vts']['clips'][0]['audio_file_location'].should_not be_empty
 			response['vts']['clips'][0]['video_file_location'].should_not be_nil
@@ -70,7 +70,7 @@ describe "API::Clips" do
 			status = response.css("vts clips status").first.text
 			status.should_not be_nil
 			status.downcase.should eq('pending')
-			audio_file_url = response.css("vts clips id").text.should_not be_nil
+			audio_file_url = response.css("vts clips translation_request_id").text.should_not be_nil
 			audio_file_url = response.css("vts clips audio_file_location").text
 			audio_file_url.should_not be_nil
 			audio_file_url.should_not be_empty
@@ -93,7 +93,7 @@ describe "API::Clips" do
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
-			response['vts']['clips'][0]['id'].should_not be_nil
+			response['vts']['clips'][0]['translation_request_id'].should_not be_nil
 			response['vts']['clips'][0]['translation_request_id'].should eq("#{@translation_request.id}")
 			response['vts']['clips'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
 		end

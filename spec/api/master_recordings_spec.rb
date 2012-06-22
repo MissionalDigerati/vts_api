@@ -45,7 +45,7 @@ describe "API::MasterRecordings" do
 			response['vts']['message'].should match('has been submitted')
 			response['vts']['master_recordings'][0]['status'].should_not be_nil
 			response['vts']['master_recordings'][0]['status'].downcase.should eq('pending')
-			response['vts']['master_recordings'][0]['id'].should_not be_nil
+			response['vts']['master_recordings'][0]['translation_request_id'].should_not be_nil
 			response['vts']['master_recordings'][0]['title'].should eq('The Compassionate Father')
 			response['vts']['master_recordings'][0]['language'].should eq('Greek')
 		end
@@ -63,7 +63,7 @@ describe "API::MasterRecordings" do
 			status = response.css("vts master_recordings status").first.text
 			status.should_not be_nil
 			status.downcase.should eq('pending')
-			response.css("vts master_recordings id").text.should_not be_nil
+			response.css("vts master_recordings translation_request_id").text.should_not be_nil
 			response.css("vts master_recordings title").text.should eq('The Feeding of 500')
 			response.css("vts master_recordings language").text.should eq('Spanish')
 		end
