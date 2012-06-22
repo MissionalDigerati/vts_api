@@ -45,6 +45,7 @@ describe "API::MasterRecordings" do
 			response['vts']['message'].should match('has been submitted')
 			response['vts']['master_recordings'][0]['status'].should_not be_nil
 			response['vts']['master_recordings'][0]['status'].downcase.should eq('pending')
+			response['vts']['master_recordings'][0]['id'].should_not be_nil
 			response['vts']['master_recordings'][0]['title'].should eq('The Compassionate Father')
 			response['vts']['master_recordings'][0]['language'].should eq('Greek')
 		end
@@ -62,8 +63,24 @@ describe "API::MasterRecordings" do
 			status = response.css("vts master_recordings status").first.text
 			status.should_not be_nil
 			status.downcase.should eq('pending')
+			response.css("vts master_recordings id").text.should_not be_nil
 			response.css("vts master_recordings title").text.should eq('The Feeding of 500')
 			response.css("vts master_recordings language").text.should eq('Spanish')
+		end
+		
+		it "should not let you add the translation_request_id" do
+			new_translation_request_id = '383838383'
+			url = "#{ROOT_URL}master_recordings.json"
+			request = RestClient.post url,{ 
+					:title => 'The Feeding of 500',
+					:language => 'Spanish',
+					:translation_request_id => new_translation_request_id,
+					:translation_request_token => @translation_request.token
+				}
+			request.code.should eq(200)
+			response = JSON.parse(request)
+			response['vts']['master_recordings'][0]['translation_request_id'].should eq("#{@translation_request.id}")
+			response['vts']['master_recordings'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
 		end
 		
 		describe "Should return valid errors" do
@@ -254,7 +271,7 @@ describe "API::MasterRecordings" do
 		end
 		
 		it "should not let you change the translation_request_id" do
-			new_translation_request_id = '98889990099998222'
+			new_translation_request_id = '45637261188'
 			url = "#{ROOT_URL}master_recordings/#{@master_recording['id']}.json"
 			request = RestClient.post url, {
 				:title 											=> 'Zombie Video',

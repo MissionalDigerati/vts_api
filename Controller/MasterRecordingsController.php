@@ -59,8 +59,10 @@ class MasterRecordingsController extends AppController {
  */
 	public function add() {
 		$this->MasterRecording->create();
-		if ($this->MasterRecording->save($this->request->data)) {
+		if ($this->MasterRecording->save($this->request->data, true, $this->MasterRecording->attrAccessible)) {
 			$id = $this->MasterRecording->getLastInsertID();
+			$this->MasterRecording->set('translation_request_id', $this->currentTranslationRequestId);
+			$this->MasterRecording->save();
 			$this->set('message', __('Your master recording request has been submitted.'));
 			$this->set('status', __('success'));
 			$this->set('master_recording', $this->MasterRecording->read(null, $id));
