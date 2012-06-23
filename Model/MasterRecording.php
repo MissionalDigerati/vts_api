@@ -86,6 +86,22 @@ class MasterRecording extends AppModel {
 	 */
 		public function afterSave() {
 			$this->query('UPDATE master_recordings SET status = "PENDING" WHERE id = '.$this->id);
+			$useCron = Configure::read('VTS.useCron');
+			if($useCron == false) {
+				/**
+				 * Set the location of the app directory relative to this file
+				 *
+				 * @var string
+				 * @author Johnathan Pulos
+				 */
+				$appDirectory = dirname(dirname(__FILE__)) . DS;
+				/**
+				 * Trigger the background process for merging audio and video for the clip.  Pipe the response to tmp/logs/processor.log
+				 *
+				 * @author Johnathan Pulos
+				 */
+				exec("cd " . $appDirectory . " && php trigger_bg_process.php MASTER_RECORDING ".$this->id." > tmp" . DS . "logs" . DS . "processor.log 2>&1 & echo $!");
+			}
 			return true;
 		}
 }
