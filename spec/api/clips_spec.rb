@@ -38,7 +38,7 @@ describe "API::Clips" do
 			url = "#{ROOT_URL}clips.json"
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
-				:video_file_location => '1/the_compassionate_father_1.mp4',
+				:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 				:multipart => true
 			request.code.should eq(200)
@@ -60,7 +60,7 @@ describe "API::Clips" do
 			url = "#{ROOT_URL}clips.xml"
 			request = RestClient.post url, 
 				:translation_request_token => @translation_request.token, 
-				:video_file_location => '1/the_compassionate_father_1.mp4',
+				:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
 				:multipart => true
 			request.code.should eq(200)
@@ -87,7 +87,7 @@ describe "API::Clips" do
 			request = RestClient.post url,{ 
 				:translation_request_id => new_translation_request_id, 
 				:translation_request_token => @translation_request.token, 
-				:video_file_location => '1/the_compassionate_father_1.mp4',
+				:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
 				:multipart => true
 			}
@@ -103,7 +103,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => @translation_request.token, 
-					:video_file_location => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 					:multipart => true
 				puts "    requires an audio file - errored incorrectly"
 			rescue => e
@@ -120,7 +120,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => @translation_request.token, 
-					:video_file_location => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp4'), 'rb'),
 					:multipart => true
 				puts "    requires a mp3 audio file - errored incorrectly"
@@ -432,7 +432,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => '', 
-					:video_file_location => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 					:multipart => true
 				puts "    should error if missing - errored incorrectly"
@@ -451,7 +451,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => translation_request.token, 
-					:video_file_location => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 					:multipart => true
 				puts "    should error if expired - errored incorrectly"
@@ -469,7 +469,7 @@ describe "API::Clips" do
 			begin
 			  request = RestClient.post url, 
 					:translation_request_token => "really", 
-					:video_file_location => '1/the_compassionate_father_1.mp4',
+					:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 					:multipart => true
 				puts "    should error if it does not exist - errored incorrectly"
