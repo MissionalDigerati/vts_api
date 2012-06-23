@@ -36,11 +36,12 @@ describe "API::Clips" do
 		
 		it "Create and respond with JSON" do
 			url = "#{ROOT_URL}clips.json"
-			request = RestClient.post url, 
+			request = RestClient.post url, {
 				:translation_request_token => @translation_request.token, 
 				:video_file_location => '/files/master_files/1/the_compassionate_father_1.mp4',
 				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
 				:multipart => true
+			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
