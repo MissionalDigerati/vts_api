@@ -42,7 +42,6 @@ if(!in_array($service, array('CLIP', 'MASTER_RECORDING'))) {
 	exit;
 }
 echo "Running service: " . $service . "\r\n";
-
 /**
  * The resources primary key
  *
@@ -195,17 +194,26 @@ switch ($service) {
 		echo "Master File: " . $masterFilePath . "\r\n";
 		$completedDirectory = $webrootDirectory . replaceDSWithServerDS('files/clips/completed/');
 		echo "Final File: ". $completedDirectory . $randomFilename."\r\n";
-		$clip = new ClipBuilder($masterFilePath, $audioFilePath, $randomFilename);
-		$clip->final_file_directory = $completedDirectory;
-		$finalFile = $clip->process();
+		try {
+		   $clip = new ClipBuilder($masterFilePath, $audioFilePath, $randomFilename);
+			$clip->final_file_directory = $completedDirectory;
+			$finalFile = $clip->process();
+			echo "The resource was processed successfully!\r\n";
+		} catch(Exception $ex) {
+			$mysqli->query("UPDATE clips SET status = 'ERROR' WHERE id = " . $resourceId);
+			echo "There was a problem in the processing of the resource.\r\n";
+			echo $ex->getMessage() . "\r\n";
+			echo "FAIL";
+			exit;
+		}
 		if(file_exists($finalFile)) {
 			$mysqli->query("UPDATE clips SET status = 'COMPLETE', completed_file_location = '/files/clips/completed/" . $randomFilename . "', completed = NOW() WHERE id = " . $resourceId);
-			echo "The resource has been processed.\r\n";
+			echo "The resource exists, and the process is complete.\r\n";
 			echo "PASS";
 			exit;
 		}else {
 			$mysqli->query("UPDATE clips SET status = 'ERROR' WHERE id = " . $resourceId);
-			echo "The resource had an error.\r\n";
+			echo "The resource is missing.\r\n";
 			echo "FAIL";
 			exit;
 		}
@@ -265,20 +273,29 @@ switch ($service) {
 			$videoBuilder->add_clip($clipCompletedPath);
 			echo "Added clip: " . $clipCompletedPath . "\r\n";
 		}
-		/**
-		 * Process the video by combining the two clips
-		 *
-		 * @author Johnathan Pulos
-		 */
-		$finalFile = $videoBuilder->process($masterRecordingData['final_filename']);
+		try {
+		   /**
+			 * Process the video by combining the two clips
+			 *
+			 * @author Johnathan Pulos
+			 */
+			$finalFile = $videoBuilder->process($masterRecordingData['final_filename']);
+			echo "The resource was processed successfully!\r\n";
+		} catch(Exception $ex) {
+			$mysqli->query("UPDATE master_recordings SET status = 'ERROR' WHERE id = " . $resourceId);
+			echo "There was a problem in the processing of the resource.\r\n";
+			echo $ex->getMessage() . "\r\n";
+			echo "FAIL";
+			exit;
+		}
 		if(file_exists($completedDirectory . $masterRecordingData['final_filename'] . '.mp4')) {
 			$mysqli->query("UPDATE master_recordings SET status = 'COMPLETE', completed = NOW() WHERE id = " . $resourceId);
-			echo "The resource has been processed.\r\n";
+			echo "The resource exists, and the process has completed.\r\n";
 			echo "PASS";
 			exit;
 		}else {
 			$mysqli->query("UPDATE master_recordings SET status = 'ERROR' WHERE id = " . $resourceId);
-			echo "The resource had an error.\r\n";
+			echo "The resource is missing.\r\n";
 			echo "FAIL";
 			exit;
 		}
