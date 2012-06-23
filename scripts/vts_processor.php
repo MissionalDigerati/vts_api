@@ -169,7 +169,7 @@ switch ($service) {
 		$result = $mysqli->query($query);
 		$clipData = $result->fetch_assoc();
 		if(empty($clipData)) {
-			echo "The resource does not exist.\r\n";
+			echo "No resources available.\r\n";
 			echo "FAIL";
 			exit;
 		}
@@ -210,8 +210,78 @@ switch ($service) {
 			exit;
 		}
 	break;
-	case 'VIDEO':
-	
+	case 'MASTER_RECORDING':
+		if($resourceId) {
+			/**
+			 * Asking for a specific resource
+			 *
+			 * @author Johnathan Pulos
+			 */
+			$query = "SELECT * from master_recordings WHERE id = " . $resourceId;
+		}else {
+			/**
+			 * pick the next in line
+			 *
+			 * @author Johnathan Pulos
+			 */
+			$query = "SELECT * from master_recordings WHERE status = 'PENDING' OR status = 'ERROR' ORDER BY created ASC LIMIT 1";
+		}
+		$result = $mysqli->query($query);
+		$masterRecordingData = $result->fetch_assoc();
+		if(empty($masterRecordingData)) {
+			echo "No resources available.\r\n";
+			echo "FAIL";
+			exit;
+		}
+		if(!$resourceId) {
+			$resourceId = $masterRecordingData['id'];
+		}
+		if(!in_array(strtoupper($masterRecordingData['status']), array('PENDING', 'ERROR'))) {
+			echo "The resource has already been processed.\r\n";
+			echo "FAIL";
+			exit;
+		}
+		$mysqli->query("UPDATE master_recordings SET status = 'PROCESSING' WHERE id = " . $resourceId);
+		$completedDirectory = $webrootDirectory . replaceDSWithServerDS('files/master_recordings/' . $masterRecordingData['final_filename'] . '/');
+		/**
+		 * Make a directory using the final_filename,  all videos will be stored here
+		 *
+		 * @author Johnathan Pulos
+		 */
+		if(!file_exists($completedDirectory)) {
+			mkdir($completedDirectory, 0777);
+		}
+		echo "All files stored in: " . $completedDirectory . "\r\n";
+		$videoBuilder = new VideoBuilder();
+		$videoBuilder->final_file_directory = $completedDirectory;
+		/**
+		 * Iterate over all clips from earliest to latest
+		 *
+		 * @author Johnathan Pulos
+		 */
+		$clipQuery = $mysqli->query("SELECT completed_file_location FROM clips WHERE translation_request_id = " . $masterRecordingData['translation_request_id'] . " ORDER BY created ASC");
+		while ($clip = $clipQuery->fetch_assoc()) {
+			$clipCompletedPath = $webrootDirectory . replaceDSWithServerDS(stripFirstDS($clip['completed_file_location']));
+			$videoBuilder->add_clip($clipCompletedPath);
+			echo "Added clip: " . $clipCompletedPath . "\r\n";
+		}
+		/**
+		 * Process the video by combining the two clips
+		 *
+		 * @author Johnathan Pulos
+		 */
+		$finalFile = $videoBuilder->process($masterRecordingData['final_filename']);
+		if(file_exists($completedDirectory . $masterRecordingData['final_filename'] . '.mp4')) {
+			$mysqli->query("UPDATE master_recordings SET status = 'COMPLETE', completed = NOW() WHERE id = " . $resourceId);
+			echo "The resource has been processed.\r\n";
+			echo "PASS";
+			exit;
+		}else {
+			$mysqli->query("UPDATE master_recordings SET status = 'ERROR' WHERE id = " . $resourceId);
+			echo "The resource had an error.\r\n";
+			echo "FAIL";
+			exit;
+		}
 	break;
 }
 ?>
