@@ -79,7 +79,7 @@ class ClipsController extends AppController {
 			$this->set('status', __('success'));
 			$this->set('clip', $this->Clip->read(null, $id));
 		} else {
-			throw new BadRequestException(__('Unable to update your clip.'));
+			throw new BadRequestException(__('Unable to add your clip.'));
 		}
 	}
 
