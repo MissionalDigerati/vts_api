@@ -7,4 +7,5 @@ Install the Video Translation Service API
 	* Change *Security.salt* and *Security.cipherSeed* to create stronger passwords
 	* Change the path at the end of file to match where your PEAR library is installed.  Login to your webhosting via command line, and type `which pear` to find this path.
 4.  Setup a database for the app according to your hosting provider's instruction
-5.  Copy *Config/database.php.default* to *Config/database.php*, and change settings to match your database settings
+5.  Use the sql file at *Config/Schema/initial_db.sql* to setup your database
+6.  Copy *Config/database.php.default* to *Config/database.php*, and change settings to match your database settings
