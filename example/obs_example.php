@@ -229,6 +229,7 @@ class VTS {
 	 */
 	private function makeRequest($path, $method, $fields = array()) {
 		$response = $this->curlUtility->makeRequest($this->rootUrl . $path, $method, $fields);
+		echo $response . "\r\n";
 		$decoded_response = json_decode($response, true);
 		if($this->hasError($decoded_response)){
 			throw new Exception("\r\nUnable to complete request:\r\n" . $this->errorMessage);
@@ -301,13 +302,13 @@ class VTS {
  * @var string
  * @author Johnathan Pulos
  */
-$rootUrl = 'http://api.obs.local/';
+$rootUrl = 'http://dev01.xsni.net/vts/';
 /**
- * Change path to match where your this example folder is
+ * Change absolute path to match where your this example folder is
  *
  * @author Johnathan Pulos
  */
-$examplePath = '/';
+$examplePath = '/Users/Technoguru/Sites/php/open_bible_stories/www/api_video_translator/example/';
 $vts = new VTS($rootUrl);
 /**
  * Get the translation request token

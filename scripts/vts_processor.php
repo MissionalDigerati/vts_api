@@ -75,7 +75,7 @@ $webrootDirectory = $appDirectory . 'webroot' . DIRECTORY_SEPARATOR;
  * @var string
  * @author Johnathan Pulos
  */
-$renderEngineDirectory = $appDirectory . 'VENDOR' . DIRECTORY_SEPARATOR . 'render_engine' . DIRECTORY_SEPARATOR;
+$renderEngineDirectory = $appDirectory . 'Vendor' . DIRECTORY_SEPARATOR . 'render_engine' . DIRECTORY_SEPARATOR;
 
 /**
  * get both seconds and microseconds parts of the time
