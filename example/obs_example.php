@@ -21,6 +21,19 @@
  * 
  */
 /**
+ * Set the Root Url
+ * 
+ * @var string
+ * @author Johnathan Pulos
+ */
+$rootUrl = 'http://api.domain.com';
+/**
+ * Change absolute path to match where your this example folder is
+ *
+ * @author Johnathan Pulos
+ */
+$examplePath = '/Users/Technoguru/Sites/php/open_bible_stories/www/api_video_translator/example/';
+/**
  * A class for handling the cURL requests
  *
  * @package default
@@ -296,19 +309,6 @@ class VTS {
 		}
 	}
 }
-/**
- * Set the Root Url
- * 
- * @var string
- * @author Johnathan Pulos
- */
-$rootUrl = 'http://dev01.xsni.net/vts/';
-/**
- * Change absolute path to match where your this example folder is
- *
- * @author Johnathan Pulos
- */
-$examplePath = '/Users/Technoguru/Sites/php/open_bible_stories/www/api_video_translator/example/';
 $vts = new VTS($rootUrl);
 /**
  * Get the translation request token
