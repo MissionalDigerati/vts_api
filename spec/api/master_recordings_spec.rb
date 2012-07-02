@@ -44,11 +44,11 @@ describe "API::MasterRecordings" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been submitted')
-			response['vts']['master_recordings'][0]['status'].should_not be_nil
-			response['vts']['master_recordings'][0]['translation_request_id'].should_not be_nil
-			response['vts']['master_recordings'][0]['title'].should eq('The Compassionate Father')
-			response['vts']['master_recordings'][0]['language'].should eq('Greek')
-			response['vts']['master_recordings'][0]['final_filename'].should eq('gr_compassionate_father')
+			response['vts']['master_recording']['status'].should_not be_nil
+			response['vts']['master_recording']['translation_request_id'].should_not be_nil
+			response['vts']['master_recording']['title'].should eq('The Compassionate Father')
+			response['vts']['master_recording']['language'].should eq('Greek')
+			response['vts']['master_recording']['final_filename'].should eq('gr_compassionate_father')
 		end
 		
 		it "Create and respond with XML" do
@@ -62,12 +62,12 @@ describe "API::MasterRecordings" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been submitted')
-			status = response.css("vts master_recordings status").first.text
+			status = response.css("vts master_recording status").first.text
 			status.should_not be_nil
-			response.css("vts master_recordings translation_request_id").text.should_not be_nil
-			response.css("vts master_recordings title").text.should eq('The Feeding of 500')
-			response.css("vts master_recordings language").text.should eq('Spanish')
-			response.css("vts master_recordings final_filename").text.should eq('sp_feeding_500')
+			response.css("vts master_recording translation_request_id").text.should_not be_nil
+			response.css("vts master_recording title").text.should eq('The Feeding of 500')
+			response.css("vts master_recording language").text.should eq('Spanish')
+			response.css("vts master_recording final_filename").text.should eq('sp_feeding_500')
 		end
 		
 		it "should not let you add the translation_request_id" do
@@ -82,8 +82,8 @@ describe "API::MasterRecordings" do
 				}
 			request.code.should eq(200)
 			response = JSON.parse(request)
-			response['vts']['master_recordings'][0]['translation_request_id'].should eq("#{@translation_request.id}")
-			response['vts']['master_recordings'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
+			response['vts']['master_recording']['translation_request_id'].should eq("#{@translation_request.id}")
+			response['vts']['master_recording']['translation_request_id'].should_not eq("#{new_translation_request_id}")
 		end
 		
 		describe "Should return valid errors" do
@@ -175,11 +175,11 @@ describe "API::MasterRecordings" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should be_empty
-			response['vts']['master_recordings'][0]['id'].should eq("#{@master_recording['id']}")
-			response['vts']['master_recordings'][0]['title'].should eq("#{@master_recording['title']}")
-			response['vts']['master_recordings'][0]['language'].should eq("#{@master_recording['language']}")
-			response['vts']['master_recordings'][0]['status'].should eq("#{@master_recording['status']}")
-			response['vts']['master_recordings'][0]['final_filename'].should eq("#{@master_recording['final_filename']}")
+			response['vts']['master_recording']['id'].should eq("#{@master_recording['id']}")
+			response['vts']['master_recording']['title'].should eq("#{@master_recording['title']}")
+			response['vts']['master_recording']['language'].should eq("#{@master_recording['language']}")
+			response['vts']['master_recording']['status'].should eq("#{@master_recording['status']}")
+			response['vts']['master_recording']['final_filename'].should eq("#{@master_recording['final_filename']}")
 		end
 		
 		it "Read and respond with XML" do
@@ -188,11 +188,11 @@ describe "API::MasterRecordings" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should be_empty
-			response.css("vts master_recordings id").first.text.should eq("#{@master_recording['id']}")
-			response.css("vts master_recordings title").first.text.should eq("#{@master_recording['title']}")
-			response.css("vts master_recordings language").first.text.should eq("#{@master_recording['language']}")
-			response.css("vts master_recordings status").first.text.should eq("#{@master_recording['status']}")
-			response.css("vts master_recordings final_filename").first.text.should eq("#{@master_recording['final_filename']}")
+			response.css("vts master_recording id").first.text.should eq("#{@master_recording['id']}")
+			response.css("vts master_recording title").first.text.should eq("#{@master_recording['title']}")
+			response.css("vts master_recording language").first.text.should eq("#{@master_recording['language']}")
+			response.css("vts master_recording status").first.text.should eq("#{@master_recording['status']}")
+			response.css("vts master_recording final_filename").first.text.should eq("#{@master_recording['final_filename']}")
 		end
 		
 		it "404 Error (resource missing)" do
@@ -242,9 +242,9 @@ describe "API::MasterRecordings" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been modified')
-			response['vts']['master_recordings'][0]['title'].should eq("#{expected_title}")
-			response['vts']['master_recordings'][0]['language'].should eq("#{expected_lang}")
-			response['vts']['master_recordings'][0]['final_filename'].should eq("#{expected_final_filename}")
+			response['vts']['master_recording']['title'].should eq("#{expected_title}")
+			response['vts']['master_recording']['language'].should eq("#{expected_lang}")
+			response['vts']['master_recording']['final_filename'].should eq("#{expected_final_filename}")
 		end
 		
 		it "Update and respond with XML" do
@@ -263,9 +263,9 @@ describe "API::MasterRecordings" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been modified')
-			response.css("vts master_recordings title").first.text.should eq("#{expected_title}")
-			response.css("vts master_recordings language").first.text.should eq("#{expected_lang}")
-			response.css("vts master_recordings final_filename").first.text.should eq("#{expected_final_filename}")
+			response.css("vts master_recording title").first.text.should eq("#{expected_title}")
+			response.css("vts master_recording language").first.text.should eq("#{expected_lang}")
+			response.css("vts master_recording final_filename").first.text.should eq("#{expected_final_filename}")
 		end
 		
 		it "404 Error (resource missing)" do
@@ -302,8 +302,8 @@ describe "API::MasterRecordings" do
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
-			response['vts']['master_recordings'][0]['status'].should_not be_nil
-			response['vts']['master_recordings'][0]['status'].downcase.should eq('pending')
+			response['vts']['master_recording']['status'].should_not be_nil
+			response['vts']['master_recording']['status'].downcase.should eq('pending')
 		end
 		
 		it "should not let you change the translation_request_id" do
@@ -319,8 +319,8 @@ describe "API::MasterRecordings" do
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
-			response['vts']['master_recordings'][0]['translation_request_id'].should eq("#{@translation_request.id}")
-			response['vts']['master_recordings'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
+			response['vts']['master_recording']['translation_request_id'].should eq("#{@translation_request.id}")
+			response['vts']['master_recording']['translation_request_id'].should_not eq("#{new_translation_request_id}")
 		end
 		
 	end
@@ -345,7 +345,7 @@ describe "API::MasterRecordings" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been deleted')
-			response['vts']['master_recordings'].should be_empty
+			response['vts']['master_recording'].should be_empty
 			OBSFactory.master_recording_exists?(@master_recording.id).should be_false
 		end
 		
@@ -356,7 +356,7 @@ describe "API::MasterRecordings" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been deleted')
-			response.css("vts master_recordings").children.length.should eq(0)
+			response.css("vts master_recording").text.should be_empty
 			OBSFactory.master_recording_exists?(@master_recording.id).should be_false
 		end
 		

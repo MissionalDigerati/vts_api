@@ -20,5 +20,5 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-echo json_encode(array('vts' => array('status' => __('success'), 'message' => '', 'master_recordings' => array(0 => $master_recording['MasterRecording']))));
+echo json_encode(array('vts' => array('status' => __('success'), 'message' => '', 'master_recording' => $master_recording['MasterRecording'])));
 ?>
