@@ -46,13 +46,13 @@ describe "API::Clips" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been submitted')
-			response['vts']['clips'][0]['status'].should_not be_nil
-			response['vts']['clips'][0]['translation_request_id'].should_not be_nil
-			response['vts']['clips'][0]['audio_file_location'].should_not be_nil
-			response['vts']['clips'][0]['audio_file_location'].should_not be_empty
-			response['vts']['clips'][0]['video_file_location'].should_not be_nil
-			response['vts']['clips'][0]['video_file_location'].should_not be_empty
-			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clips'][0]['audio_file_location'])
+			response['vts']['clip']['status'].should_not be_nil
+			response['vts']['clip']['translation_request_id'].should_not be_nil
+			response['vts']['clip']['audio_file_location'].should_not be_nil
+			response['vts']['clip']['audio_file_location'].should_not be_empty
+			response['vts']['clip']['video_file_location'].should_not be_nil
+			response['vts']['clip']['video_file_location'].should_not be_empty
+			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clip']['audio_file_location'])
 			File.exists?(@expected_file).should be_true
 		end
 		
@@ -67,13 +67,13 @@ describe "API::Clips" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been submitted')
-			status = response.css("vts clips status").first.text
+			status = response.css("vts clip status").first.text
 			status.should_not be_nil
-			audio_file_url = response.css("vts clips translation_request_id").text.should_not be_nil
-			audio_file_url = response.css("vts clips audio_file_location").text
+			audio_file_url = response.css("vts clip translation_request_id").text.should_not be_nil
+			audio_file_url = response.css("vts clip audio_file_location").text
 			audio_file_url.should_not be_nil
 			audio_file_url.should_not be_empty
-			video_file_url = response.css("vts clips video_file_location").text
+			video_file_url = response.css("vts clip video_file_location").text
 			video_file_url.should_not be_nil
 			video_file_url.should_not be_empty
 			@expected_file = File.join(WEBROOT_DIRECTORY, audio_file_url)
@@ -92,9 +92,9 @@ describe "API::Clips" do
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
-			response['vts']['clips'][0]['translation_request_id'].should_not be_nil
-			response['vts']['clips'][0]['translation_request_id'].should eq("#{@translation_request.id}")
-			response['vts']['clips'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
+			response['vts']['clip']['translation_request_id'].should_not be_nil
+			response['vts']['clip']['translation_request_id'].should eq("#{@translation_request.id}")
+			response['vts']['clip']['translation_request_id'].should_not eq("#{new_translation_request_id}")
 		end
 		
 		it "requires an audio file" do
@@ -161,12 +161,12 @@ describe "API::Clips" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been modified')
-			response['vts']['clips'][0]['status'].should_not be_nil
-			response['vts']['clips'][0]['status'].downcase.should eq('pending')
-			response['vts']['clips'][0]['audio_file_location'].should_not eq('/made/up/file.mp3')
-			response['vts']['clips'][0]['audio_file_location'].should eq("/files/clips/#{expected_audio_file_name}.mp3")
-			response['vts']['clips'][0]['video_file_location'].should eq(expected_video_file_location)
-			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clips'][0]['audio_file_location'])
+			response['vts']['clip']['status'].should_not be_nil
+			response['vts']['clip']['status'].downcase.should eq('pending')
+			response['vts']['clip']['audio_file_location'].should_not eq('/made/up/file.mp3')
+			response['vts']['clip']['audio_file_location'].should eq("/files/clips/#{expected_audio_file_name}.mp3")
+			response['vts']['clip']['video_file_location'].should eq(expected_video_file_location)
+			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clip']['audio_file_location'])
 			File.exists?(@expected_file).should be_true
 		end
 		
@@ -186,13 +186,13 @@ describe "API::Clips" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been modified')
-			status = response.css("vts clips status").first.text
+			status = response.css("vts clip status").first.text
 			status.should_not be_nil
 			status.downcase.should eq('pending')
-			audio_file_url = response.css("vts clips audio_file_location").text
+			audio_file_url = response.css("vts clip audio_file_location").text
 			audio_file_url.should_not eq('/made/up/file.mp3')
 			audio_file_url.should eq("/files/clips/#{expected_audio_file_name}.mp3")
-			video_file_url = response.css("vts clips video_file_location").text
+			video_file_url = response.css("vts clip video_file_location").text
 			video_file_url.should eq(expected_video_file_location)
 			@expected_file = File.join(WEBROOT_DIRECTORY, audio_file_url)
 			File.exists?(@expected_file).should be_true
@@ -211,8 +211,8 @@ describe "API::Clips" do
 				'_method' => 'PUT'
 			request.code.should eq(200)
 			response = JSON.parse(request)
-			response['vts']['clips'][0]['status'].should_not be_nil
-			response['vts']['clips'][0]['status'].downcase.should eq('pending')
+			response['vts']['clip']['status'].should_not be_nil
+			response['vts']['clip']['status'].downcase.should eq('processing')
 		end
 		
 		it "should not let you change the translation_request_id" do
@@ -228,8 +228,8 @@ describe "API::Clips" do
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
-			response['vts']['clips'][0]['translation_request_id'].should eq("#{@translation_request.id}")
-			response['vts']['clips'][0]['translation_request_id'].should_not eq("#{new_translation_request_id}")
+			response['vts']['clip']['translation_request_id'].should eq("#{@translation_request.id}")
+			response['vts']['clip']['translation_request_id'].should_not eq("#{new_translation_request_id}")
 		end
 		
 	end
@@ -253,10 +253,10 @@ describe "API::Clips" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should be_empty
-			response['vts']['clips'][0]['id'].should eq("#{@clip['id']}")
-			response['vts']['clips'][0]['audio_file_location'].should eq(@clip['audio_file_location'])
-			response['vts']['clips'][0]['video_file_location'].should eq("#{@clip['video_file_location']}")
-			response['vts']['clips'][0]['status'].should eq("#{@clip['status']}")
+			response['vts']['clip']['id'].should eq("#{@clip['id']}")
+			response['vts']['clip']['audio_file_location'].should eq(@clip['audio_file_location'])
+			response['vts']['clip']['video_file_location'].should eq("#{@clip['video_file_location']}")
+			response['vts']['clip']['status'].should eq("#{@clip['status']}")
 		end
 		
 		it "READ and respond with XML" do
@@ -266,12 +266,12 @@ describe "API::Clips" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should be_empty
-			status = response.css("vts clips status").first.text
+			status = response.css("vts clip status").first.text
 			status.should_not be_nil
 			status.should eq("#{@clip['status']}")
-			audio_file_url = response.css("vts clips audio_file_location").text
+			audio_file_url = response.css("vts clip audio_file_location").text
 			audio_file_url.should eq(@clip['audio_file_location'])
-			video_file_url = response.css("vts clips video_file_location").text
+			video_file_url = response.css("vts clip video_file_location").text
 			video_file_url.should eq("#{@clip['video_file_location']}")
 		end
 		
@@ -392,7 +392,7 @@ describe "API::Clips" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been deleted')
-			response['vts']['clips'].should be_empty
+			response['vts']['clip'].should be_empty
 			OBSFactory.clip_exists?(@clip.id).should be_false
 		end
 		
@@ -403,7 +403,7 @@ describe "API::Clips" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been deleted')
-			response.css("vts clips").children.length.should eq(0)
+			response.css("vts clip").text.should be_empty
 			OBSFactory.clip_exists?(@clip.id).should be_false
 		end
 		
