@@ -26,7 +26,7 @@
  * @var string
  * @author Johnathan Pulos
  */
-$rootUrl = 'http://api.domain.com';
+$rootUrl = 'http://api.domain.com/';
 /**
  * Change absolute path to match where your this example folder is
  *
@@ -177,7 +177,7 @@ class VTS {
 	 */
 	public function getToken() {
 		$response = $this->makeRequest('translation_requests.json', 'POST', array());
-		$translation_request = $response['vts']['translation_requests'][0];
+		$translation_request = $response['vts']['translation_request'];
 		$this->token = $translation_request['token'];
 		return $this->token;
 	}
@@ -223,7 +223,7 @@ class VTS {
 			 */
 			echo "We are ready for creating the master recording. \r\n";
 			$response = $this->makeRequest('master_recordings.json', 'POST', $fields);
-			$masterRecording = $response['vts']['master_recordings'][0];
+			$masterRecording = $response['vts']['master_recording'];
 			if($this->pollMasterRecordingProcessorStatus($masterRecording['id']) === true) {
 				return $masterRecording;
 			}
@@ -242,7 +242,6 @@ class VTS {
 	 */
 	private function makeRequest($path, $method, $fields = array()) {
 		$response = $this->curlUtility->makeRequest($this->rootUrl . $path, $method, $fields);
-		echo $response . "\r\n";
 		$decoded_response = json_decode($response, true);
 		if($this->hasError($decoded_response)){
 			throw new Exception("\r\nUnable to complete request:\r\n" . $this->errorMessage);
@@ -280,7 +279,7 @@ class VTS {
 	 */
 	private function pollMasterRecordingProcessorStatus($id) {
 		$response = $this->makeRequest('master_recordings/' . $id . '.json', 'GET', array('translation_request_token' 	=> $this->token));
-		$masterRecordingStatus = $response['vts']['master_recordings'][0]['status'];
+		$masterRecordingStatus = $response['vts']['master_recording']['status'];
 		if($masterRecordingStatus == 'COMPLETE') {
 			return true;
 		}else {
@@ -332,7 +331,7 @@ for ($i=1; $i <= 3; $i++) {
 	 */
 	$videoFilePath = "/files/master_files/example/the_compassionate_father_" . $i . ".mp4";
 	$clipResponse = $vts->createClip($audioFilePath, $videoFilePath);
-	$clip = $clipResponse['vts']['clips'][0];
+	$clip = $clipResponse['vts']['clip'];
 	echo "Uploaded " . basename($audioFilePath) . " to server as " . basename($clip['audio_file_location']) . ". \r\n";
 	sleep(20);
 }
