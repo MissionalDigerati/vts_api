@@ -35,9 +35,9 @@ describe "API::TranslationRequests" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should be_empty
-			response['vts']['translation_requests'][0]['id'].should eq("#{@translation_request['id']}")
-			response['vts']['translation_requests'][0]['token'].should eq(@translation_request['token'])
-			response['vts']['translation_requests'][0]['expires_at'].should eq("#{@translation_request['expires_at'].strftime("%Y-%m-%d %H:%M:%S")}")
+			response['vts']['translation_request']['id'].should eq("#{@translation_request['id']}")
+			response['vts']['translation_request']['token'].should eq(@translation_request['token'])
+			response['vts']['translation_request']['expires_at'].should eq("#{@translation_request['expires_at'].strftime("%Y-%m-%d %H:%M:%S")}")
 		end
 	
 		it "Read and respond with XML" do
@@ -47,11 +47,11 @@ describe "API::TranslationRequests" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").text.should eq('success')
 			response.css("vts message").text.should be_empty
-			id = response.css("vts translation_requests id").first.text
+			id = response.css("vts translation_request id").first.text
 			id.should eq("#{@translation_request['id']}")
-			token = response.css("vts translation_requests token").first.text
+			token = response.css("vts translation_request token").first.text
 			token.should eq(@translation_request['token'])
-			expires = response.css("vts translation_requests expires_at").first.text
+			expires = response.css("vts translation_request expires_at").first.text
 			expires.should eq("#{@translation_request['expires_at'].strftime("%Y-%m-%d %H:%M:%S")}")
 		end
 		
@@ -97,10 +97,10 @@ describe "API::TranslationRequests" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been created')
-			response['vts']['translation_requests'][0]['token'].should_not be_nil
-			response['vts']['translation_requests'][0]['token'].should_not be_empty
-			response['vts']['translation_requests'][0]['expires_at'].should_not be_nil
-			response['vts']['translation_requests'][0]['expires_at'].should_not be_empty
+			response['vts']['translation_request']['token'].should_not be_nil
+			response['vts']['translation_request']['token'].should_not be_empty
+			response['vts']['translation_request']['expires_at'].should_not be_nil
+			response['vts']['translation_request']['expires_at'].should_not be_empty
 		end
 	
 		it "Create and respond with XML" do
@@ -110,10 +110,10 @@ describe "API::TranslationRequests" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").text.should eq('success')
 			response.css("vts message").text.should match('has been created')
-			token = response.css("vts translation_requests token").first.text
+			token = response.css("vts translation_request token").first.text
 			token.should_not be_nil
 			token.should_not be_empty
-			expires = response.css("vts translation_requests expires_at").first.text
+			expires = response.css("vts translation_request expires_at").first.text
 			expires.should_not be_nil
 			expires.should_not be_empty
 		end
@@ -124,7 +124,7 @@ describe "API::TranslationRequests" do
 			request = RestClient.post url, {:token => new_token}
 			request.code.should eq(200)
 			response = JSON.parse(request)
-			response['vts']['translation_requests'][0]['token'].should_not eq("#{new_token}")
+			response['vts']['translation_request']['token'].should_not eq("#{new_token}")
 		end
 	end
 	
@@ -141,7 +141,7 @@ describe "API::TranslationRequests" do
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been deleted')
-			response['vts']['translation_requests'].should be_empty
+			response['vts']['translation_request'].should be_empty
 			OBSFactory.translation_request_exists?(@translation_request.id).should be_false
 		end
 	
@@ -152,8 +152,8 @@ describe "API::TranslationRequests" do
 			response = Nokogiri::XML(request)
 			response.css("vts status").text.should eq('success')
 			response.css("vts message").text.should match('has been deleted')
-			translation_requests = response.css("vts translation_requests")
-			translation_requests.children.length.should eq(0)
+			translation_request = response.css("vts translation_request")
+			translation_request.text.should be_empty
 			OBSFactory.translation_request_exists?(@translation_request.id).should be_false
 		end
 		

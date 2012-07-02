@@ -20,5 +20,5 @@
  * @copyright Copyright 2012 Missional Digerati
  * 
  */
-echo json_encode(array('vts' => array('status' => __('success'), 'message' => '', 'translation_requests' => array(0 => $translation_request['TranslationRequest']))));
+echo json_encode(array('vts' => array('status' => __('success'), 'message' => '', 'translation_request' => $translation_request['TranslationRequest'])));
 ?>
