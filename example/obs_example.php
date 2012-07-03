@@ -26,7 +26,7 @@
  * @var string
  * @author Johnathan Pulos
  */
-$rootUrl = 'http://api.domain.com/';
+$rootUrl = 'http://dev01.xsni.net/vts/';
 /**
  * Change absolute path to match where your this example folder is
  *

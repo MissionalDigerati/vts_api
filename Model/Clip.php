@@ -36,7 +36,7 @@ class Clip extends AppModel {
 		'Uploader.FileValidation' => array(
 				'audio_file' => array(
 						'extension' => array(
-								'value' => array('mp3'),
+								'value' => array('mp3', 'caf'),
 								'error' => 'Only mp3 files are allowed!'
 							)
 					)
@@ -66,6 +66,27 @@ class Clip extends AppModel {
 					)
 			)
 	);
+	
+	/**
+	 * CakePHP Callback only used to convert caf files to mp3
+	 *
+	 * @return boolean
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	public function beforeSave() {
+		if(isset($this->data[$this->alias]['audio_file_location']) && !empty($this->data[$this->alias]['audio_file_location'])) {
+			$audioFile = $this->data[$this->alias]['audio_file_location'];
+			if($audioFile) {
+				$audioPath = WWW_ROOT . ltrim(str_replace('/', DS, $audioFile), DS);
+				$info = pathinfo($audioPath);
+				if($info['extension'] == 'caf') {
+					$this->data[$this->alias]['audio_file_location'] = $this->convertCafToMp3($audioFile, $audioPath);
+				}
+			}
+		}
+		return true;
+	} 
 	
 	/**
 	 * Call the CakePHP afterSave callback
@@ -116,5 +137,32 @@ class Clip extends AppModel {
 			}
 		}
 		return $ready;
+	}
+	
+	/**
+	 * Converts a CAF file to MP# using command line and FFMPEG library
+	 *
+	 * @param string $audioFile the current audioFile
+	 * @param string $audioPath the absolute path to the audio file
+	 * @return string
+	 * @access private
+	 * @author Johnathan Pulos
+	 */
+	private function convertCafToMp3($audioFile, $audioPath) {
+		/**
+		 * The location of the final mp3
+		 *
+		 * @author Johnathan Pulos
+		 */
+		$mp3File = substr($audioFile, 0,strrpos($audioFile,'.')) . ".mp3";
+		$mp3Path = WWW_ROOT . ltrim(str_replace('/', DS, $mp3File), DS);
+		/**
+		 * Convert to mp3
+		 *
+		 * @author Johnathan Pulos
+		 */
+		exec("ffmpeg -y -i " . $audioPath . " -acodec libmp3lame -ab 68k -ar 44100 " . $mp3Path);
+		unlink($audioPath);
+		return $mp3File;
 	}
 }
