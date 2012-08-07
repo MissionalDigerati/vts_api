@@ -36,7 +36,7 @@ class Clip extends AppModel {
 		'Uploader.FileValidation' => array(
 				'audio_file' => array(
 						'extension' => array(
-								'value' => array('mp3', 'caf'),
+								'value' => array('mp3', 'caf', 'wav'),
 								'error' => 'Only mp3 files are allowed!'
 							)
 					)
@@ -80,9 +80,6 @@ class Clip extends AppModel {
 			if($audioFile) {
 				$audioPath = WWW_ROOT . ltrim(str_replace('/', DS, $audioFile), DS);
 				$info = pathinfo($audioPath);
-				if($info['extension'] == 'caf') {
-					$this->data[$this->alias]['audio_file_location'] = $this->convertCafToMp3($audioFile, $audioPath);
-				}
 			}
 		}
 		return true;
