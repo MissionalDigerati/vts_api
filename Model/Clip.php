@@ -93,7 +93,12 @@ class Clip extends AppModel {
 	 * @author Johnathan Pulos
 	 */
 		public function afterSave() {
-			$this->query('UPDATE clips SET status = "PENDING" WHERE id = '.$this->id);
+			/**
+			 * Bypass CakePHP's call backs by running the query straight.  Otherwise, you will get stuck in a forever loop.
+			 *
+			 * @author Johnathan Pulos
+			 */
+			$this->query('UPDATE clips SET status = "PENDING", completed_file_location = "" WHERE id = '.$this->id);
 			$useCron = Configure::read('VTS.useCron');
 			if($useCron == false) {
 				/**

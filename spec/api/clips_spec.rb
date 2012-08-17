@@ -162,7 +162,8 @@ describe "API::Clips" do
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been modified')
 			response['vts']['clip']['status'].should_not be_nil
-			response['vts']['clip']['status'].downcase.should eq('pending')
+			['pending', 'processing'].include?(response['vts']['clip']['status'].downcase).should be_true
+			#response['vts']['clip']['completed_file_location'].should be_empty
 			response['vts']['clip']['audio_file_location'].should_not eq('/made/up/file.mp3')
 			response['vts']['clip']['audio_file_location'].should eq("/files/clips/#{expected_audio_file_name}.mp3")
 			response['vts']['clip']['video_file_location'].should eq(expected_video_file_location)
@@ -188,7 +189,7 @@ describe "API::Clips" do
 			response.css("vts message").text.should match('has been modified')
 			status = response.css("vts clip status").first.text
 			status.should_not be_nil
-			status.downcase.should eq('pending')
+			['pending', 'processing'].include?(status.downcase).should be_true
 			audio_file_url = response.css("vts clip audio_file_location").text
 			audio_file_url.should_not eq('/made/up/file.mp3')
 			audio_file_url.should eq("/files/clips/#{expected_audio_file_name}.mp3")
@@ -198,7 +199,7 @@ describe "API::Clips" do
 			File.exists?(@expected_file).should be_true
 		end
 		
-		it "should set status to pending if modified" do
+		it "should set status to pending or processing if modified" do
 			clip = OBSFactory.clip({:translation_request_id => @translation_request.id, :status => 'COMPLETE'})
 			url = "#{ROOT_URL}clips/#{clip.id}.json"
 			# We have a max filename size of 30 characters
@@ -212,7 +213,7 @@ describe "API::Clips" do
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['clip']['status'].should_not be_nil
-			response['vts']['clip']['status'].downcase.should eq('processing')
+			['pending', 'processing'].include?(response['vts']['clip']['status'].downcase).should be_true
 		end
 		
 		it "should not let you change the translation_request_id" do
