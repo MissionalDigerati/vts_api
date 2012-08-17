@@ -3,6 +3,18 @@ VTS API
 
 This API uses the [VTS Rendering Engine](https://github.com/MissionalDigerati/vts_rendering_engine) to enable translating videos from a wide array of devices.  Using standard API protocol,  you can access the power of FFMPEG, and crowd source the translation of your video content to any device.
 
+Package
+-------
+
+This is part of the Video Translating Service Package (VTS) which consists of the following repositories:
+
+* [VTS API](https://github.com/MissionalDigerati/vts_api)
+	* Submodule - [VTS Rendering Engine](https://github.com/MissionalDigerati/vts_rendering_engine)
+* [VTS CakePHP Web Interface](https://github.com/MissionalDigerati/vts_web_interface)	
+	* Submodule - [VTS CakePHP 2 Plugin](https://github.com/MissionalDigerati/vts_cakephp_plugin)
+	
+To use this service, you will need one instance of the [VTS API](https://github.com/MissionalDigerati/vts_api) running on a stand alone server, and the [VTS CakePHP Web Interface](https://github.com/MissionalDigerati/vts_web_interface) running on a separate server.
+
 Requirements
 ------------
 
