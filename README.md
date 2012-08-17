@@ -1,7 +1,7 @@
-Video Translation API
-=====================
+VTS API
+=======
 
-An API for translating video files.
+This API uses the [VTS Rendering Engine](https://github.com/MissionalDigerati/vts_rendering_engine) to enable translating videos from a wide array of devices.  Using standard API protocol,  you can access the power of FFMPEG, and crowd source the translation of your video content to any device.
 
 Requirements
 ------------
@@ -20,11 +20,11 @@ Installation
 API Documentation
 -----------------
 
-To view the API Documentation,  just visit the [Github Pages Branch](https://github.com/MissionalDigerati/video_translator_service/tree/gh-pages).
+To view the API Documentation,  just visit the [Github Pages Branch](https://github.com/MissionalDigerati/vts_api/tree/gh-pages).
 
 Development
 -----------
 
-Questions or problems? Please post them on the [issue tracker](https://github.com/MissionalDigerati/video_translator_service/issues). You can contribute changes by forking the project and submitting a pull request.
+Questions or problems? Please post them on the [issue tracker](https://github.com/MissionalDigerati/vts_api/issues). You can contribute changes by forking the project and submitting a pull request.
 
 This script is created by Johnathan Pulos and is under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl-3.0-standalone.html).
