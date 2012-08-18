@@ -50,6 +50,16 @@ class TranslationRequest extends AppModel {
 			'dependent'    => true
 		)
 	);
+	
+	/**
+	 * belongsTo associations
+	 *
+	 * @var array
+	 */
+	public $belongsTo = array(	'ApiKey' => array(	'className' => 'ApiKey',
+																									'foreignKey' => 'api_key_id'
+																							)
+														);
 			
 	/**
 	 * Check if the translation request token has expired

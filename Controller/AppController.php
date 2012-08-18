@@ -76,48 +76,12 @@ class AppController extends Controller {
 			}
 		}
 		/**
-		 * Make sure they are using the correct HTTP methods
+		 * if we are not on API keys, then validate the HTP Status Code
 		 *
 		 * @author Johnathan Pulos
 		 */
-		switch ($this->request['action']) {
-			case 'index':
-			case 'view':
-				if (!$this->request->is('get')) {
-					throw new MethodNotAllowedException($url.__(' requires a GET HTTP Method.'));
-					exit;
-				}
-			break;
-			case 'add':
-				if (!$this->request->is('post')) {
-					throw new MethodNotAllowedException($url.__(' requires a POST HTTP Method.'));
-					exit;
-				}
-			break;
-			case 'edit':
-				/**
-				 * Due to cake's inability to handle PUT vars, and PHP's arcaic, stupid lack of sufficient support for PUT requests,
-				 * we have to use a old hack.  We will use _method to determin PUT requests, and send a POST request.
-				 *
-				 * @author Johnathan Pulos
-				 */
-				if ($this->request->is('get') || $this->request->is('delete')) {
-					throw new MethodNotAllowedException($url.__(' requires a PUT HTTP Method or a POST with a _method var set to PUT.'));
-					exit;
-				}
-			break;
-			case 'delete':
-				/**
-				 * Due to cake's inability to handle PUT vars, and PHP's arcaic, stupid lack of sufficient support for PUT requests,
-				 * we have to use a old hack.  We will use _method to determin PUT requests, and send a POST request.
-				 *
-				 * @author Johnathan Pulos
-				 */
-				if ($this->request->is('get') || $this->request->is('put')) {
-					throw new MethodNotAllowedException($url.__(' requires a DELETE HTTP Method or a POST with a _method var set to DELETE.'));
-					exit;
-				}
-			break;
+		if($this->name != 'ApiKeys') {
+			$this->validateHttpRequest();
 		}
 	}
 	
@@ -179,6 +143,55 @@ class AppController extends Controller {
 	 */
 	private function cleanedToken($token) {
 		return ereg_replace("[^A-Za-z0-9]", "", $token);
+	}
+	
+	/**
+	 * Make sure they are using the correct HTTP methods.  Throws error if it fails
+	 *
+	 * @return void
+	 * @access private
+	 * @author Johnathan Pulos
+	 */
+	private function validateHttpRequest() {
+		switch ($this->request['action']) {
+			case 'index':
+			case 'view':
+				if (!$this->request->is('get')) {
+					throw new MethodNotAllowedException($url.__(' requires a GET HTTP Method.'));
+					exit;
+				}
+			break;
+			case 'add':
+				if (!$this->request->is('post')) {
+					throw new MethodNotAllowedException($url.__(' requires a POST HTTP Method.'));
+					exit;
+				}
+			break;
+			case 'edit':
+				/**
+				 * Due to cake's inability to handle PUT vars, and PHP's arcaic, stupid lack of sufficient support for PUT requests,
+				 * we have to use a old hack.  We will use _method to determin PUT requests, and send a POST request.
+				 *
+				 * @author Johnathan Pulos
+				 */
+				if ($this->request->is('get') || $this->request->is('delete')) {
+					throw new MethodNotAllowedException($url.__(' requires a PUT HTTP Method or a POST with a _method var set to PUT.'));
+					exit;
+				}
+			break;
+			case 'delete':
+				/**
+				 * Due to cake's inability to handle PUT vars, and PHP's arcaic, stupid lack of sufficient support for PUT requests,
+				 * we have to use a old hack.  We will use _method to determin PUT requests, and send a POST request.
+				 *
+				 * @author Johnathan Pulos
+				 */
+				if ($this->request->is('get') || $this->request->is('put')) {
+					throw new MethodNotAllowedException($url.__(' requires a DELETE HTTP Method or a POST with a _method var set to DELETE.'));
+					exit;
+				}
+			break;
+		}
 	}
 
 }

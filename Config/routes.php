@@ -20,6 +20,7 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+Router::mapResources('api_keys');
 Router::mapResources('translation_requests');
 Router::mapResources('clips');
 Router::mapResources('master_recordings');
