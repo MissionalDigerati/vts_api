@@ -59,7 +59,7 @@ class PagesController extends AppController {
  * @return void
  */
 	public function display() {
-		$this->layout = 'pages';
+		$this->layout = 'manage';
 		$path = func_get_args();
 
 		$count = count($path);
