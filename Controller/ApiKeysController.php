@@ -41,6 +41,18 @@ class ApiKeysController extends AppController {
 	public $helpers = array('TwitterBootstrap', 'Session', 'Html');
 	
 	public $layout = 'manage';
+	
+	/**
+	 * A list of all the current API keys
+	 *
+	 * @return void
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	public function index() {
+		$this->set('apiKeys', $this->ApiKey->find('all'));
+	}
+	
 	/**
 	 * Add a new API key
 	 *
