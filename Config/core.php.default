@@ -292,6 +292,20 @@ Cache::config('_cake_model_', array(
  */
 Configure::write('VTS.useCron',false);
 /**
+ * Set weather the translation request tokens expires
+ * 
+ * @var boolean
+ * @author Johnathan Pulos
+ */
+Configure::write('VTS.translationRequest.expires', false);
+/**
+ * The number of days for the token to expire
+ * 
+ * @var integer
+ * @author Johnathan Pulos
+ */
+Configure::write('VTS.translationRequest.expiresIn', 1);
+/**
  * If you decide to use the background process route,  you will need to add your php path to the PATH.  On your server,  on the command line,  type `which php`.  
  * This will give you the path to PHP.  Just replace '/usr/local/bin' with your PHP path.  This is important to get background processing working.
  *

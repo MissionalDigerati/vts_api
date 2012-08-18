@@ -59,9 +59,10 @@ class TranslationRequest extends AppModel {
 	 * @author Johnathan Pulos
 	 */
 	public function isExpired() {
-		if(time() > strtotime($this->field('expires_at'))) {
-			return true;
-		}else {
+		$expires = Configure::read('VTS.translationRequest.expires');
+		if($expires === true) {
+			return (time() > strtotime($this->field('expires_at'))) ? true : false;
+		} else {
 			return false;
 		}
 	}
@@ -74,10 +75,16 @@ class TranslationRequest extends AppModel {
 	 * @author Johnathan Pulos
 	 */
 		public function afterSave() {
+			$expires = Configure::read('VTS.translationRequest.expires');
+			$expiresIn = Configure::read('VTS.translationRequest.expiresIn');
 			$token = "tr" . $this->createToken(25);
-			$tomorrow = mktime(date("G"),date("i"),date("s"),date("m"),date("d")+1,date("Y"));
-			$expires_at = date('Y-m-d G:i:s', $tomorrow);
-			$this->query('UPDATE translation_requests SET token = "' . $token . '", expires_at = "' . $expires_at . '" WHERE id = '.$this->id);
+			if($expires === true) {
+				$expirationDate = mktime(date("G"),date("i"),date("s"),date("m"),date("d")+$expiresIn,date("Y"));
+				$expiresAt = date('Y-m-d G:i:s', $expirationDate);
+			}else {
+				$expiresAt = '';
+			}
+			$this->query('UPDATE translation_requests SET token = "' . $token . '", expires_at = "' . $expiresAt . '" WHERE id = '.$this->id);
 			return true;
 		}
 }

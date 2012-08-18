@@ -174,7 +174,7 @@ describe "API::TranslationRequests" do
 		end
 	end
 	
-	describe "Expired Translation Requests" do
+	describe "Expired Translation Requests", :token_expiring => true do
 		
 		before(:each) do
 			@translation_request = OBSFactory.translation_request({expires_at: (Date.today - 1)})
@@ -250,4 +250,46 @@ describe "API::TranslationRequests" do
 		
 	end
 	
+	describe "Non Expiring Translation Requests", :token_expiring => false do
+		
+		before(:each) do
+			@translation_request = OBSFactory.translation_request({expires_at: nil})
+		end
+		
+		it "should grant access to view, and respond with JSON" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
+			request = RestClient.get url
+			request.code.should_not eq(401)
+			response = JSON.parse(request)
+			response['vts']['status'].should_not be_empty
+			response['vts']['status'].should match('success')
+		end
+		
+		it "should grant access to view, and respond with XML" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
+			request = RestClient.get url
+			request.code.should_not eq(401)
+			response = Nokogiri::XML(request)
+			response.css("vts status").text.should eq('success')
+			response.css("vts status").text.should_not be_empty
+		end
+		
+		it "should grant access to delete, and respond with JSON" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.json"
+			request = RestClient.get url
+			request.code.should_not eq(401)
+			response = JSON.parse(request)
+			response['vts']['status'].should_not be_empty
+			response['vts']['status'].should match('success')
+		end
+		
+		it "should grant access to delete, and respond with XML" do
+			url = "#{ROOT_URL}translation_requests/#{@translation_request['id']}.xml"
+			request = RestClient.get url
+			request.code.should_not eq(401)
+			response = Nokogiri::XML(request)
+			response.css("vts status").text.should eq('success')
+			response.css("vts status").text.should_not be_empty
+		end
+	end
 end

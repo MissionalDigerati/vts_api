@@ -46,6 +46,12 @@ WEBROOT_DIRECTORY = File.expand_path("../../webroot", __FILE__)
 
 # RSpec configuration
 RSpec.configure do |config|
+	# declare an exclusion filter
+	# exlude the test that best fits your translation request configuration in Config/core.php
+	# use `config.filter_run_excluding :token_expiring => false` to exclude any testing on expiring translation requests requires expiresIn = 1
+	# use `config.filter_run_excluding :token_expiring => true` to exclude any testing on non expiring translation requests
+	#
+	config.filter_run_excluding :token_expiring => true
 	
 	config.before(:suite) do
 		cleaner.truncate_tables(table_names)
