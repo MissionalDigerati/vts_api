@@ -64,11 +64,33 @@ class ApiKeysController extends AppController {
 		$this->ApiKey->create();
 		if(!empty($this->request->data)) {
 			if ($this->ApiKey->save($this->request->data, true, $this->ApiKey->attrAccessible)) {
-				$this->Session->setFlash(__('Your api key has been created.'), '_flash_msg', array('msgType' => 'info'));
-				$this->redirect(array('controller'	=>	'api_keys', 'action'	=>	'index'));
+				$this->Session->setFlash(__('Your API Key has been created.'), '_flash_msg', array('msgType' => 'info'));
+				$this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('Unable to create your api key.'), '_flash_msg', array('msgType' => 'error'));
+				$this->Session->setFlash(__('Unable to create your API Key.'), '_flash_msg', array('msgType' => 'error'));
 			}
+		}
+	}
+	
+	/**
+	 * Delete a API Key
+	 *
+	 * @param integer $id	ApiKey.id 
+	 * @return void
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	public function delete($id = null) {
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		$this->ApiKey->id = $id;
+		if ($this->ApiKey->delete()) {
+			$this->Session->setFlash(__('The API Key has been deleted.'), '_flash_msg', array('msgType' => 'info'));
+			$this->redirect(array('action' => 'index'));
+		}else {
+			$this->Session->setFlash(__('Unable to delete the API Key.'), '_flash_msg', array('msgType' => 'error'));
+			$this->redirect(array('action' => 'index'));
 		}
 	}
 
