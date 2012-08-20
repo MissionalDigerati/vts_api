@@ -40,6 +40,11 @@ class ApiKeysController extends AppController {
 	 */
 	public $helpers = array('TwitterBootstrap', 'Session', 'Html');
 	
+	/**
+	 * Set the Controller wide layout
+	 *
+	 * @var string
+	 */
 	public $layout = 'manage';
 	
 	/**

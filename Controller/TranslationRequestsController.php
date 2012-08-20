@@ -30,6 +30,18 @@ App::uses('AppController', 'Controller');
 class TranslationRequestsController extends AppController {
 
 /**
+ * Call the CakePHP callback beforeFilter
+ *
+ * @return void
+ * @access public
+ * @author Johnathan Pulos
+ */
+	public function beforeFilter() {
+		$this->Auth->allow();
+		parent::beforeFilter();
+	}
+		
+/**
  * index method
  * /translation_requests.format
  *

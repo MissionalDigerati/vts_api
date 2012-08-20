@@ -46,6 +46,13 @@
           <div class="nav-collapse">
             <ul class="nav pull-right">
               <li><?php echo $this->Html->link(__('Home'), '/'); ?></li>
+							<?php 
+								if($this->Session->read('Auth.User.id')):
+									echo '<li>' . $this->Html->link(__('Welcome Administrator'), array('controller'	=>	'users', 'action'	=>	'my_account'), array('title'	=>	'View My Account')) . '</li>';
+									echo '<li>' . $this->Html->link(__('API Keys'), array('controller'	=>	'api_keys', 'action'	=>	'index')) . '</li>';
+									echo '<li>' . $this->Html->link(__('Logout'), array('controller' => 'users', 'action' => 'logout', 'admin'	=>	false)) . '</li>';
+								endif;
+							?>
 							<li>
 								<div>
 									<?php echo $this->Html->link(__('Add an API Key'), array('controller' => 'api_keys', 'action' => 'add', 'admin'	=>	false), array('class' => 'btn btn-primary')); ?>

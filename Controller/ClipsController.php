@@ -16,6 +16,7 @@ class ClipsController extends AppController {
  */
 	public function beforeFilter() {
 		$this->mustHaveValidToken();
+		$this->Auth->allow();
 		parent::beforeFilter();
 	}
 

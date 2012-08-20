@@ -21,6 +21,26 @@
  * 
  */
 ?>
-<h1>VTS API</h1>
-
-<p>If you would like more information regarding this VTS API,  please visit the website at: <a href="http://vts.missionaldigerati.org">http://vts.missionaldigerati.org</a></p>
+<div class="users edit form">
+<?php echo $this->Form->create('User', array('inputDefaults' => $this->TwitterBootstrap->inputDefaults(), 'class' => 'form-horizontal'));?>
+	<fieldset>
+		<legend><?php echo __('Edit Account'); ?></legend>
+	<?php echo $this->Form->input('email'); ?>
+	<div class="control-group">
+		<div class="controls">
+			<label class="checkbox">
+			<input type="checkbox" name="data[User][change_password]" value="1">
+				Change Password!
+			</label>
+		</div>
+	</div>
+	<?php
+		echo $this->Form->input('password');
+		echo $this->Form->input('confirm_password', array('type'=>	'password'));
+	?>
+	</fieldset>
+	<div class="form-actions">
+		<button type="submit" class="btn btn-primary"><?php echo __('Update Account'); ?></button>
+	</div>
+<?php echo $this->Form->end(); ?>
+</div>

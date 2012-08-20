@@ -20,6 +20,7 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+Router::mapResources('users');
 Router::mapResources('api_keys');
 Router::mapResources('translation_requests');
 Router::mapResources('clips');
@@ -29,7 +30,7 @@ Router::mapResources('master_recordings');
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/View/Pages/home.ctp)...
  */
-	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+	Router::connect('/', array('controller' => 'users', 'action' => 'login'));
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */

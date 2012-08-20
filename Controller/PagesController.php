@@ -51,6 +51,18 @@ class PagesController extends AppController {
  * @var array
  */
 	public $uses = array();
+	
+/**
+ * Call the CakePHP callback beforeFilter
+ *
+ * @return void
+ * @access public
+ * @author Johnathan Pulos
+ */
+	public function beforeFilter() {
+		$this->Auth->allow();
+		parent::beforeFilter();
+	}
 
 /**
  * Displays a view

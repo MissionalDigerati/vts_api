@@ -25,6 +25,7 @@ class MasterRecordingsController extends AppController {
 		}else{
 			throw new Exception(__('Your translation request token is missing.'), 401);
 		}
+		$this->Auth->allow();
 		parent::beforeFilter();
 	}
 

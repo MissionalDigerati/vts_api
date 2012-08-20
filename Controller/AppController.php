@@ -37,7 +37,10 @@ class AppController extends Controller {
 	 *
 	 * @var array
 	 */
-	public $components = array('DebugKit.Toolbar', 'RequestHandler');
+	public $components = array('DebugKit.Toolbar', 
+															'RequestHandler',
+															'Auth' => array('authenticate' => array('Form' => array('fields' => array('username' => 'email'))))
+														);
 	/**
 	 * The current translation request id
 	 *
@@ -59,6 +62,7 @@ class AppController extends Controller {
 	 * @author Johnathan Pulos
 	 */
 	public function beforeFilter() {
+		// Pass settings in
 		$url = $this->request->here();
 		/**
 		 * Set up the correct response
