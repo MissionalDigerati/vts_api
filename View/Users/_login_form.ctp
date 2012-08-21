@@ -21,13 +21,16 @@
  * 
  */
 ?>
-<div class="users login form">
-	<h1>VTS API</h1>
-
-	<p>If you would like more information regarding this VTS API,  please visit the website at: <a href="http://vts.missionaldigerati.org">http://vts.missionaldigerati.org</a></p>
-	<?php 
-		if(!$this->Session->read('Auth.User.id')):
-			echo $this->element('../Users/_login_form'); 
-		endif;
+<?php echo $this->Form->create('User', array('inputDefaults' => $this->TwitterBootstrap->inputDefaults(), 'class' => 'form-horizontal'));?>
+	<fieldset>
+		<legend><?php echo __('Administration Login'); ?></legend>
+	<?php
+		echo $this->Form->input('email');
+		echo $this->Form->input('password');
 	?>
-</div>
+	</fieldset>
+	<div class="form-actions">
+		<button type="submit" class="btn btn-primary"><?php echo __('Login'); ?></button>
+		<?php echo $this->Html->link(__('Forgot Password?'), array('controller'	=>	'users', 'action'	=>	'request_password_change'), array('class'=> 'btn btn-mini')); ?></button>
+	</div>
+<?php echo $this->Form->end(); ?>
