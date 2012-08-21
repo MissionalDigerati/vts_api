@@ -1,6 +1,8 @@
 require "digest/sha1"
 require 'date'
 
+class ApiKey < ActiveRecord::Base
+end
 class TranslationRequest < ActiveRecord::Base
 end
 class Clip < ActiveRecord::Base
@@ -9,6 +11,20 @@ class MasterRecording < ActiveRecord::Base
 end
 
 class OBSFactories
+	
+	# create a translation request
+	# 
+	def api_key(options = {})
+		attributes = {:app_resource => 'test tool', :hash_key => token, :modified => Date.today, :created => Date.today}
+		attributes.merge!(options)
+		ApiKey.create!(attributes)
+	end
+	
+	# check if the translation_request exists
+	#
+	def api_key_exists?(id)
+		ApiKey.exists?(id)
+	end
 	
 	# create a translation request
 	# 

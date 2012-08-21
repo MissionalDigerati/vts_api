@@ -29,6 +29,13 @@ App::uses('AppController', 'Controller');
  */
 class TranslationRequestsController extends AppController {
 
+	/**
+	 * The current API key Id
+	 *
+	 * @var string
+	 */
+	public $currentApiKeyId;
+	
 /**
  * Call the CakePHP callback beforeFilter
  *
@@ -38,6 +45,7 @@ class TranslationRequestsController extends AppController {
  */
 	public function beforeFilter() {
 		$this->Auth->allow();
+		$this->mustHaveValidApiKey();
 		parent::beforeFilter();
 	}
 		
@@ -78,6 +86,7 @@ class TranslationRequestsController extends AppController {
  */
 	public function add() {
 		$this->TranslationRequest->create();
+		$this->request->data['TranslationRequest']['api_key_id'] = $this->currentApiKeyId;
 		if ($this->TranslationRequest->save($this->request->data, true, $this->TranslationRequest->attrAccessible)) {
 			$id = $this->TranslationRequest->getLastInsertID();
 			$this->set('message', __('Your translation request has been created.'));
@@ -108,6 +117,32 @@ class TranslationRequestsController extends AppController {
 			$this->set('status', __('success'));
 		}else {
 			throw new BadRequestException(__('There was a problem with your request.'));
+		}
+	}
+	
+	/**
+	 * Checks if the client has a valid api_key for identifying the caller
+	 *
+	 * @return void
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	private function mustHaveValidApiKey() {
+		$this->currentApiKey = $this->cleanedToken($this->getParam('api_key'));
+		if(empty($this->currentApiKey)) {
+			throw new Exception(__('Your api key is missing.'), 401);
+		}
+		$currentApiKey = $this->TranslationRequest->ApiKey->find('first', array('conditions'	=>	array('hash_key'	=>	$this->currentApiKey)));
+		if (empty($currentApiKey)) {
+			throw new NotFoundException(__('Invalid API key submitted.'));
+		} else{
+			$this->currentApiKeyId = $currentApiKey['ApiKey']['id'];
+		}
+		if(in_array($this->action, array('view', 'delete'))) {
+			$translationRequest = $this->TranslationRequest->read(null, $this->request->id);
+			if($translationRequest['TranslationRequest']['api_key_id'] != $this->currentApiKeyId) {
+				throw new NotFoundException(__('You do not have permission.'));
+			}
 		}
 	}
 

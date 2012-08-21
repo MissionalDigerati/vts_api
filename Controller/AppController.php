@@ -47,12 +47,20 @@ class AppController extends Controller {
 	 * @var array
 	 */
 		public $currentTranslationRequestId;
+		
 	/**
 	 * The current token supplied to this controller
 	 *
 	 * @var string
 	 */
 		public $currentToken;
+		
+	/**
+	 * The current API Key supplied to this controller
+	 *
+	 * @var string
+	 */
+		public $currentApiKey;
 	
 	/**
 	 * CakePHP callback beforeFilter
@@ -145,7 +153,7 @@ class AppController extends Controller {
 	 * @access private
 	 * @author Johnathan Pulos
 	 */
-	private function cleanedToken($token) {
+	public function cleanedToken($token) {
 		return ereg_replace("[^A-Za-z0-9]", "", $token);
 	}
 	

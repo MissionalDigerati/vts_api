@@ -39,7 +39,7 @@ Dir["#{support_dir}/**/*.rb"].each {|f| require f}
 #
 ROOT_URL = 'http://api.obs.local/'
 cleaner = DatabaseCleaner.new
-table_names = ['translation_requests', 'clips','master_recordings']
+table_names = ['translation_requests', 'clips','master_recordings', 'api_keys']
 OBSFactory = OBSFactories.new
 SPEC_DIRECTORY = File.dirname(__FILE__)
 WEBROOT_DIRECTORY = File.expand_path("../../webroot", __FILE__)
