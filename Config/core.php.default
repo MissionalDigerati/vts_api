@@ -282,8 +282,12 @@ Cache::config('_cake_model_', array(
  * @author Johnathan Pulos
  */
 /**
- * You have the choice to use CRON or Background processes for the video processing.  We highly recommend using background processes, but it will require 
- * some server setup.  See {@link https://github.com/MissionalDigerati/video_translator_service/blob/gh-pages/install.md Installation Instructions} for more info.
+ * You have the choice to use CRON or Background processes for the video processing.  We highly recommend using the CRON Job processing.  See 
+ * the Installation Instructions for more info.
+ * 
+ * CRON Job command `php scripts/vts_processor.php` from app directory.
+ * 
+ * It takes around 2-3 minutes to process a single clip, and less then a minute to render a master_recording
  * 
  * true - will use CRON for video processing
  * false - will use background processing for video processing

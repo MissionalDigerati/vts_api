@@ -52,7 +52,6 @@ $resourceId = (isset($argv[2])) ? $argv[2]: null;
 if($resourceId) {
 	echo "For the Resource: " . $resourceId . "\r\n";
 }
-
 /**
  * Set the location of the app directory relative to this file
  *
@@ -104,21 +103,21 @@ $randomFilename = substr(md5(date('ymd') . $usec . $sec), 0, 20);
  *
  * @author Johnathan Pulos
  */
-require_once  $appDirectory . 'scripts' . DIRECTORY_SEPARATOR . 'processor_functions.php';
+require_once($appDirectory . 'scripts' . DIRECTORY_SEPARATOR . 'processor_functions.php');
 
 /**
  * Require the render engine lib files
  *
  * @author Johnathan Pulos
  */
-require_once  $renderEngineDirectory . 'lib' . DIRECTORY_SEPARATOR . 'rendering.php';
+require_once($renderEngineDirectory . 'lib' . DIRECTORY_SEPARATOR . 'rendering.php');
 
 /**
  * Get the database settings from the CakePHP files
  *
  * @author Johnathan Pulos
  */
-require_once  $appDirectory . 'Config' . DIRECTORY_SEPARATOR . 'database.php';
+require_once($appDirectory . 'Config' . DIRECTORY_SEPARATOR . 'database.php');
 $dbSettings = new DATABASE_CONFIG();
 
 /**
@@ -141,7 +140,19 @@ if ($mysqli->connect_errno) {
 	exit;
 }
 echo "Using the database: " . $dbSettings->default['database'] . "\r\n";
-
+/**
+ * lets determine the best service to use
+ *
+ * @author Johnathan Pulos
+ */
+if((!isset($argv[1])) && ($resourceId == null)) {
+	$newService = nextServiceToProcess($mysqli);
+	if($newService != $service) {
+		echo "Changing service to: " . $newService . "\r\n";
+		$service = $newService;
+		$newService = '';
+	}
+}
 /**
  * Lets get to work
  *
@@ -150,21 +161,7 @@ echo "Using the database: " . $dbSettings->default['database'] . "\r\n";
 echo "OK.  Let's get to work: \r\n";
 switch ($service) {
 	case 'CLIP':
-		if($resourceId) {
-			/**
-			 * Asking for a specific resource
-			 *
-			 * @author Johnathan Pulos
-			 */
-			$query = "SELECT * from clips WHERE id = " . $resourceId;
-		}else {
-			/**
-			 * pick the next in line
-			 *
-			 * @author Johnathan Pulos
-			 */
-			$query = "SELECT * from clips WHERE status = 'PENDING' OR status = 'ERROR' ORDER BY created ASC LIMIT 1";
-		}
+		$query = getCorrectSql($mysqli, 'clips', $resourceId);
 		$result = $mysqli->query($query);
 		$clipData = $result->fetch_assoc();
 		if(empty($clipData)) {
@@ -219,21 +216,7 @@ switch ($service) {
 		}
 	break;
 	case 'MASTER_RECORDING':
-		if($resourceId) {
-			/**
-			 * Asking for a specific resource
-			 *
-			 * @author Johnathan Pulos
-			 */
-			$query = "SELECT * from master_recordings WHERE id = " . $resourceId;
-		}else {
-			/**
-			 * pick the next in line
-			 *
-			 * @author Johnathan Pulos
-			 */
-			$query = "SELECT * from master_recordings WHERE status = 'PENDING' OR status = 'ERROR' ORDER BY created ASC LIMIT 1";
-		}
+		$query = getCorrectSql($mysqli, 'master_recordings', $resourceId);
 		$result = $mysqli->query($query);
 		$masterRecordingData = $result->fetch_assoc();
 		if(empty($masterRecordingData)) {

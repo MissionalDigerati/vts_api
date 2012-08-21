@@ -41,7 +41,7 @@ function stripFirstDS($path) {
 	}
 }
 /**
- * Replaces the current directory seperator with the SERVER DIRECTORY_SEPARATOR
+ * Replaces the current directory separator with the SERVER DIRECTORY_SEPARATOR
  *
  * @param string $path the path to check
  * @return string
@@ -50,5 +50,50 @@ function stripFirstDS($path) {
  */
 function replaceDSWithServerDS($path) {
 	return str_replace('/', DIRECTORY_SEPARATOR, $path);
+}
+/**
+ * Looks for the next process to complete.  If there are no clips to process, it will change service to master_recordings
+ *
+ * @param object $mysqli the mysql object
+ * @return string
+ * @access public
+ * @author Johnathan Pulos
+ */
+function nextServiceToProcess($mysqli) {
+	$query = getCorrectSql($mysqli, 'clips', null);
+	$result = $mysqli->query($query);
+	$clipData = $result->fetch_assoc();
+	if(!empty($clipData)) {
+		return 'CLIP';
+	} else{
+		return 'MASTER_RECORDING';
+	}
+}
+/**
+ * Get the correct query statement for the processing
+ *
+ * @param object $mysqli The mysql object
+ * @param string $resourceType the table name to use
+ * @param integer $resourceId the id of the resource
+ * @return string
+ * @access public
+ * @author Johnathan Pulos
+ */
+function getCorrectSql($mysqli, $resourceType, $resourceId = null) {
+	if($resourceId) {
+		/**
+		 * Asking for a specific resource
+		 *
+		 * @author Johnathan Pulos
+		 */
+		return "SELECT * from " . $resourceType . " WHERE id = " . $resourceId;
+	}else {
+		/**
+		 * pick the next in line
+		 *
+		 * @author Johnathan Pulos
+		 */
+		return "SELECT * from " . $resourceType . " WHERE status = 'PENDING' OR status = 'ERROR' ORDER BY created ASC LIMIT 1";
+	}
 }
 ?>
