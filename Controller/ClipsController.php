@@ -28,7 +28,7 @@ class ClipsController extends AppController {
 	public function index() {
 		$clips = array();
 		$this->Clip->recursive = 0;
-		$current_clips = $this->Clip->find('all', array('conditions' => array('Clip.translation_request_id' => $this->currentTranslationRequestId)));
+		$current_clips = $this->Clip->find('all', array('conditions' => array('Clip.translation_request_id' => $this->currentTranslationRequestId), 'order' => array('Clip.order_by' => 'ASC')));
 		/**
 		 * Remove the Clip key
 		 *
