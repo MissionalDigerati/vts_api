@@ -74,13 +74,24 @@ class ClipsController extends AppController {
 		$this->request->data['audio_file'] = $this->request->form['audio_file'];
 		if ($this->Clip->save($this->request->data, true, $this->Clip->attrAccessible)) {
 			$id = $this->Clip->getLastInsertID();
+			/**
+			 * Unbind the validation so we can add the translation request id
+			 *
+			 * @author Johnathan Pulos
+			 */
+			$this->Clip->unbindValidation('remove', array('order_by'));
 			$this->Clip->set('translation_request_id', $this->currentTranslationRequestId);
 			$this->Clip->save();
 			$this->set('message', __('Your clip has been submitted.'));
 			$this->set('status', __('success'));
 			$this->set('clip', $this->Clip->read(null, $id));
 		} else {
-			throw new BadRequestException(__('Unable to add your clip.'));
+			$errors = $this->Clip->invalidFields();
+			if(!empty($errors)) {
+				throw new BadRequestException($this->ppErrors($errors));
+			}else {
+				throw new BadRequestException(__('Unable to add your clip.'));
+			}
 		}
 	}
 

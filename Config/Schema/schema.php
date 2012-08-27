@@ -65,6 +65,7 @@ class ApiVideoTranslatorSchema extends CakeSchema {
 		'audio_file_location' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'video_file_location' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'completed_file_location' => array('type' => 'text', 'null' => true, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
+		'order_by' => array('type' => 'integer', 'null' => false, 'default' => NULL),
 		'status' => array('type' => 'string', 'null' => false, 'default' => 'PENDING', 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
@@ -87,7 +88,7 @@ class ApiVideoTranslatorSchema extends CakeSchema {
 	);
 	public $translation_requests = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'api_key_id' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+		'api_key_id' => array('type' => 'integer', 'null' => true, 'default' => NULL),
 		'token' => array('type' => 'string', 'null' => false, 'default' => NULL, 'collate' => 'latin1_swedish_ci', 'charset' => 'latin1'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),

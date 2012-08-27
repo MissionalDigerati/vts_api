@@ -158,6 +158,26 @@ class AppController extends Controller {
 	}
 	
 	/**
+	 * iterates over cakePHP's invalidFields() errors, and returns a string of the errors.
+	 *
+	 * @param array $errors the errors received from invalidFields()
+	 * @return string
+	 * @access public
+	 * @author Johnathan Pulos
+	 */
+	public function ppErrors($errors) {
+		$errorMsg = '';
+		foreach($errors as $key => $value) {
+			foreach ($value as $individualError) {
+				if(strpos($errorMsg, $individualError) === false) {
+					$errorMsg .= $individualError . " ";
+				}
+			}
+		}
+		return trim($errorMsg);
+	}
+	
+	/**
 	 * Make sure they are using the correct HTTP methods.  Throws error if it fails
 	 *
 	 * @return void

@@ -250,7 +250,7 @@ switch ($service) {
 		 *
 		 * @author Johnathan Pulos
 		 */
-		$clipQuery = $mysqli->query("SELECT completed_file_location FROM clips WHERE translation_request_id = " . $masterRecordingData['translation_request_id'] . " ORDER BY created ASC");
+		$clipQuery = $mysqli->query("SELECT completed_file_location FROM clips WHERE translation_request_id = " . $masterRecordingData['translation_request_id'] . " ORDER BY order_by ASC");
 		while ($clip = $clipQuery->fetch_assoc()) {
 			$clipCompletedPath = $webrootDirectory . replaceDSWithServerDS(stripFirstDS($clip['completed_file_location']));
 			$videoBuilder->add_clip($clipCompletedPath);

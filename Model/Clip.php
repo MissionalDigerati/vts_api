@@ -12,7 +12,7 @@ class Clip extends AppModel {
 	 *
 	 * @var array
 	 */
-	public $attrAccessible = array('video_file_location', 'audio_file_location', 'audio_file');
+	public $attrAccessible = array('video_file_location', 'audio_file_location', 'audio_file', 'order_by');
 
 	/**
 	 * belongsTo associations
@@ -65,6 +65,19 @@ class Clip extends AppModel {
 						)
 					)
 			)
+	);
+	
+	/**
+	 * Setup necessary validation
+	 *
+	 * @var array
+	 */
+	public $validate = array(
+														'order_by' => array(
+																							'rule' => 'notEmpty',
+										        									'required' => true,
+										        									'message' => 'Please supply a valid order_by for the clip.'
+																						)
 	);
 	
 	/**

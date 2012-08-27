@@ -37,10 +37,11 @@ describe "API::Clips" do
 		it "Create and respond with JSON" do
 			url = "#{ROOT_URL}clips.json"
 			request = RestClient.post url, {
-				:translation_request_token => @translation_request.token, 
-				:video_file_location => '/files//master_files/example/the_compassionate_father_1.mp4',
-				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
-				:multipart => true
+				:translation_request_token 	=> @translation_request.token, 
+				:video_file_location 				=> '/files/master_files/example/the_compassionate_father_1.mp4',
+				:audio_file 								=> File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'),
+				:order_by 											=> 1,
+				:multipart 									=> true
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
@@ -48,6 +49,7 @@ describe "API::Clips" do
 			response['vts']['message'].should match('has been submitted')
 			response['vts']['clip']['status'].should_not be_nil
 			response['vts']['clip']['translation_request_id'].should_not be_nil
+			response['vts']['clip']['translation_request_id'].should eq("#{@translation_request.id}")
 			response['vts']['clip']['audio_file_location'].should_not be_nil
 			response['vts']['clip']['audio_file_location'].should_not be_empty
 			response['vts']['clip']['video_file_location'].should_not be_nil
@@ -59,17 +61,20 @@ describe "API::Clips" do
 		it "Create and respond with XML" do
 			url = "#{ROOT_URL}clips.xml"
 			request = RestClient.post url, 
-				:translation_request_token => @translation_request.token, 
-				:video_file_location => '/files//master_files/example/the_compassionate_father_1.mp4',
-				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
-				:multipart => true
+				:translation_request_token 	=> @translation_request.token, 
+				:video_file_location 				=> '/files/master_files/example/the_compassionate_father_1.mp4',
+				:audio_file 								=> File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'),
+				:order_by											=> 1, 
+				:multipart 									=> true
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
 			response.css("vts message").text.should match('has been submitted')
 			status = response.css("vts clip status").first.text
 			status.should_not be_nil
-			audio_file_url = response.css("vts clip translation_request_id").text.should_not be_nil
+			translation_request_id = response.css("vts clip translation_request_id").text
+			translation_request_id.should_not be_nil
+			translation_request_id.should eq("#{@translation_request.id}")
 			audio_file_url = response.css("vts clip audio_file_location").text
 			audio_file_url.should_not be_nil
 			audio_file_url.should_not be_empty
@@ -84,11 +89,12 @@ describe "API::Clips" do
 			new_translation_request_id = '383838383'
 			url = "#{ROOT_URL}clips.json"
 			request = RestClient.post url,{ 
-				:translation_request_id => new_translation_request_id, 
-				:translation_request_token => @translation_request.token, 
-				:video_file_location => '/files//master_files/example/the_compassionate_father_1.mp4',
-				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
-				:multipart => true
+				:translation_request_id 		=> new_translation_request_id, 
+				:translation_request_token 	=> @translation_request.token, 
+				:video_file_location 				=> '/files/master_files/example/the_compassionate_father_1.mp4',
+				:audio_file 								=> File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'),
+				:order_by											=> "1", 
+				:multipart 									=> true
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
@@ -101,15 +107,17 @@ describe "API::Clips" do
 			url = "#{ROOT_URL}clips.json"
 			begin
 			  request = RestClient.post url, 
-					:translation_request_token => @translation_request.token, 
-					:video_file_location => '/files//master_files/example/the_compassionate_father_1.mp4',
-					:multipart => true
+					:translation_request_token 	=> @translation_request.token, 
+					:video_file_location 				=> '/files/master_files/example/the_compassionate_father_1.mp4',
+					:order_by											=> 1,
+					:multipart 									=> true
 				puts "    requires an audio file - errored incorrectly"
 			rescue => e
 				e.response.code.should eq(400)
 				response = JSON.parse(e.response)
 				response['vts']['status'].should eq('error')
 				response['vts']['message'].downcase.should match('missing required attributes')
+				response['vts']['details'].downcase.should match('missing the audio file')
 				puts "    requires an audio file - errored correctly"
 			end
 		end
@@ -118,10 +126,11 @@ describe "API::Clips" do
 			url = "#{ROOT_URL}clips.json"
 			begin
 			  request = RestClient.post url, 
-					:translation_request_token => @translation_request.token, 
-					:video_file_location => '/files//master_files/example/the_compassionate_father_1.mp4',
-					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp4'), 'rb'),
-					:multipart => true
+					:translation_request_token 	=> @translation_request.token, 
+					:video_file_location 				=> '/files/master_files/example/the_compassionate_father_1.mp4',
+					:audio_file 								=> File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp4'), 'rb'),
+					:order_by											=> 1,
+					:multipart 									=> true
 				puts "    requires a mp3 audio file - errored incorrectly"
 			rescue => e
 				e.response.code.should eq(400)
@@ -137,7 +146,7 @@ describe "API::Clips" do
 		
 		before(:each) do
 			@translation_request = OBSFactory.translation_request
-			@clip = OBSFactory.clip({:translation_request_id => @translation_request.id, :audio_file_location => '/made/up/file.mp3'})
+			@clip = OBSFactory.clip({:translation_request_id => @translation_request.id, :audio_file_location => '/made/up/file.mp3', :order_by => 1})
 			@expected_file = '';
 		end
 		
@@ -152,20 +161,21 @@ describe "API::Clips" do
 			#
 			expected_audio_file_name = "#{Digest::MD5.hexdigest('23_1.mp3')}"[0,30]
 			request = RestClient.post url, 
-				:translation_request_token => @translation_request.token, 
-				:video_file_location => expected_video_file_location,
-				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
-				:multipart => true,
-				'_method' => 'PUT'
+				:translation_request_token 	=> @translation_request.token, 
+				:video_file_location 				=> expected_video_file_location,
+				:audio_file 								=> File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:multipart 									=> true,
+				:order_by										=> "2",
+				'_method' 									=> 'PUT'
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['status'].should eq('success')
 			response['vts']['message'].should match('has been modified')
 			response['vts']['clip']['status'].should_not be_nil
 			['pending', 'processing'].include?(response['vts']['clip']['status'].downcase).should be_true
-			#response['vts']['clip']['completed_file_location'].should be_empty
 			response['vts']['clip']['audio_file_location'].should_not eq('/made/up/file.mp3')
 			response['vts']['clip']['audio_file_location'].should eq("/files/clips/#{expected_audio_file_name}.mp3")
+			response['vts']['clip']['order_by'].should eq("2")
 			response['vts']['clip']['video_file_location'].should eq(expected_video_file_location)
 			@expected_file = File.join(WEBROOT_DIRECTORY, response['vts']['clip']['audio_file_location'])
 			File.exists?(@expected_file).should be_true
@@ -178,11 +188,12 @@ describe "API::Clips" do
 			#
 			expected_audio_file_name = "#{Digest::MD5.hexdigest('23_2.mp3')}"[0,30]
 			request = RestClient.post url, 
-				:translation_request_token => @translation_request.token, 
-				:video_file_location => expected_video_file_location,
-				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
-				:multipart => true,
-				'_method' => 'PUT'
+				:translation_request_token 	=> @translation_request.token, 
+				:video_file_location 				=> expected_video_file_location,
+				:audio_file 								=> File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_2.mp3'), 'rb'), 
+				:multipart 									=> true,
+				:order_by											=> "3",
+				'_method' 									=> 'PUT'
 			request.code.should eq(200)
 			response = Nokogiri::XML(request)
 			response.css("vts status").first.text.should eq('success')
@@ -197,6 +208,7 @@ describe "API::Clips" do
 			video_file_url.should eq(expected_video_file_location)
 			@expected_file = File.join(WEBROOT_DIRECTORY, audio_file_url)
 			File.exists?(@expected_file).should be_true
+			response.css("vts clip order_by").text.should eq("3")
 		end
 		
 		it "should set status to pending or processing if modified" do
@@ -205,11 +217,12 @@ describe "API::Clips" do
 			# We have a max filename size of 30 characters
 			#
 			request = RestClient.post url, 
-				:translation_request_token => @translation_request.token, 
-				:video_file_location => '',
-				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
-				:multipart => true,
-				'_method' => 'PUT'
+				:translation_request_token 	=> @translation_request.token, 
+				:video_file_location 				=> '',
+				:audio_file 								=> File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:multipart 									=> true,
+				:order_by											=> 1,
+				'_method' 									=> 'PUT'
 			request.code.should eq(200)
 			response = JSON.parse(request)
 			response['vts']['clip']['status'].should_not be_nil
@@ -220,12 +233,13 @@ describe "API::Clips" do
 			new_translation_request_id = '45637261188'
 			url = "#{ROOT_URL}clips/#{@clip.id}.json"
 			request = RestClient.post url,{ 
-				:translation_request_token => @translation_request.token, 
-				:translation_request_id => new_translation_request_id,
-				:video_file_location => '',
-				:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
-				:multipart => true,
-				'_method' => 'PUT'
+				:translation_request_token 	=> @translation_request.token, 
+				:translation_request_id 		=> new_translation_request_id,
+				:video_file_location 				=> '',
+				:audio_file 								=> File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
+				:multipart 									=> true,
+				:order_by											=> 1,
+				'_method' 									=> 'PUT'
 			}
 			request.code.should eq(200)
 			response = JSON.parse(request)
@@ -442,25 +456,6 @@ describe "API::Clips" do
 				response['vts']['status'].should eq('error')
 				response['vts']['message'].downcase.should match('unauthorized')
 				puts "    should error if missing - errored correctly"
-			end
-		end
-		
-		it "should error if expired" do
-			translation_request = OBSFactory.translation_request({expires_at: (Date.today - 4)})
-			url = "#{ROOT_URL}clips.json"
-			begin
-			  request = RestClient.post url, 
-					:translation_request_token => translation_request.token, 
-					:video_file_location => '/files//master_files/example/the_compassionate_father_1.mp4',
-					:audio_file => File.new(File.join(SPEC_DIRECTORY,'files','audio', '23_1.mp3'), 'rb'), 
-					:multipart => true
-				puts "    should error if expired - errored incorrectly"
-			rescue => e
-				e.response.code.should eq(401)
-				response = JSON.parse(e.response)
-				response['vts']['status'].should eq('error')
-				response['vts']['message'].downcase.should match('unauthorized')
-				puts "    should error if expired - errored correctly"
 			end
 		end
 		

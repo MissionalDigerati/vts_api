@@ -44,7 +44,7 @@ class OBSFactories
 	#
 	def clip(options = {})
 		translation_request = self.translation_request
-		attributes = {:translation_request_id => translation_request.id, :audio_file_location => 'files/clips/fake_file.mp3', :video_file_location => '1/the_compassionate_father_1.mp4', :modified => Date.today, :created => Date.today}
+		attributes = {:translation_request_id => translation_request.id, :audio_file_location => 'files/clips/fake_file.mp3', :video_file_location => '1/the_compassionate_father_1.mp4', :modified => Date.today, :created => Date.today, :order_by => 1}
 		attributes.merge!(options)
 		Clip.create!(attributes)
 	end
