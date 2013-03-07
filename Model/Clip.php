@@ -37,7 +37,7 @@ class Clip extends AppModel {
 				'audio_file' => array(
 						'extension' => array(
 								'value' => array('mp3', 'caf', 'wav'),
-								'error' => 'Only mp3 files are allowed!'
+								'error' => 'Only mp3, caf, or wav files are allowed!'
 							)
 					)
 		),
@@ -72,13 +72,9 @@ class Clip extends AppModel {
 	 *
 	 * @var array
 	 */
-	public $validate = array(
-														'order_by' => array(
-																							'rule' => 'notEmpty',
-										        									'required' => true,
-										        									'message' => 'Please supply a valid order_by for the clip.'
-																						)
-	);
+	public $validate = array('order_by' => array(   'rule' => 'notEmpty',
+										        	'required' => true,
+										        	'message' => 'Please supply a valid order_by for the clip.'));
 	
 	/**
 	 * CakePHP Callback only used to convert caf files to mp3
